@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EcoNova – Login &amp; Sign Up</title>
+<style>
+/* ---------- Design tokens ---------- */
+:root {
+  --bg: #031923;
+  --panel: #04202d;
+  --cyan: #00e5ff;
+  --turquoise: #19f0d2;
+  --teal: #046a7a;
+  --deep: #02404f;
+  --text: #e8fbff;
+  --muted: #7fb3bf;
+  --error: #ff8a9b;
+  --ok: #5dffb0;
+  --font: "Poppins", "Montserrat", "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body {
+  font-family: var(--font);
+  color: var(--text);
+  background: var(--bg);
+  display: grid; place-items: center;
+  padding: 24px; overflow-x: hidden; min-height: 100vh;
+}
+
+/* ---------- Background ---------- */
+.bg-glow {
+  position: fixed; inset: -20%; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(40% 40% at 20% 25%, rgba(0,229,255,.16), transparent 70%),
+    radial-gradient(35% 35% at 80% 75%, rgba(25,240,210,.12), transparent 70%);
+  animation: drift 18s ease-in-out infinite alternate;
+}
+@keyframes drift { to { transform: translate3d(4%, -3%, 0) scale(1.08); } }
+#particles { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+
+/* ---------- Card ---------- */
+.card {
+  position: relative; z-index: 1;
+  width: min(900px, 100%); min-height: 560px;
+  background: var(--panel);
+  border: 2px solid var(--cyan);
+  overflow: hidden;
+  animation: enter .9s cubic-bezier(.2,.8,.2,1) both, pulse 3.2s ease-in-out .9s infinite;
+}
+@keyframes enter { from { opacity: 0; transform: scale(.94); } to { opacity: 1; transform: scale(1); } }
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 8px rgba(0,229,255,.35), 0 0 30px rgba(0,229,255,.18); }
+  50%      { box-shadow: 0 0 16px rgba(0,229,255,.9), 0 0 60px rgba(0,229,255,.4); }
+}
+
+/* ---------- Welcome panel ---------- */
+.welcome {
+  position: absolute; top: 0; left: 0; bottom: 0; width: 64%;
+  clip-path: polygon(0 0, 100% 0, 26.5% 100%, 0 100%);
+  background: linear-gradient(to bottom left, #00cfe3, #05798b 55%, #043a48);
+  background-size: 160% 160%;
+  animation: shimmer 8s ease-in-out infinite alternate;
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 48px 50% 48px 56px;
+  color: #fff;
+}
+@keyframes shimmer { to { background-position: 100% 100%; } }
+.welcome h2 {
+  margin: 0 0 12px; font-size: clamp(1.5rem, 3.1vw, 2.1rem); line-height: 1.15;
+  font-weight: 800; letter-spacing: .5px; color: #fff;
+  text-shadow: 0 2px 14px rgba(2,34,43,.45);
+  animation: rise .9s .5s cubic-bezier(.2,.8,.2,1) both;
+}
+.welcome p {
+  margin: 0; font-size: .95rem; line-height: 1.5; color: #fff; font-weight: 500;
+  animation: rise .9s .7s cubic-bezier(.2,.8,.2,1) both;
+}
+@keyframes rise { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: none; } }
+
+/* Glowing diagonal edge */
+.slash { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; filter: drop-shadow(0 0 4px var(--cyan)); }
+.slash line { stroke: var(--cyan); stroke-width: 1.6; vector-effect: non-scaling-stroke; }
+
+/* ---------- Form area ---------- */
+.auth { margin-left: 58%; padding: 44px 5.5% 36px 0; display: grid; min-height: 560px; }
+.auth > form {
+  grid-area: 1 / 1; align-self: center;
+  transition: opacity .45s ease, transform .45s ease, visibility .45s;
+}
+.auth > form.is-hidden { opacity: 0; visibility: hidden; pointer-events: none; transform: translateX(40px); }
+.auth > form.is-hidden.left { transform: translateX(-40px); }
+
+h1 { margin: 0 0 18px; font-size: 2.1rem; font-weight: 700; color: #fff; text-align: center; }
+
+/* Fields with line-only inputs and floating labels */
+.field { position: relative; margin-bottom: 8px; padding-bottom: 20px; }
+.field input[type="text"], .field input[type="email"], .field input[type="password"] {
+  width: 100%; height: 48px; padding: 14px 34px 4px 0;
+  background: transparent; border: 0; border-bottom: 2px solid rgba(255,255,255,.8);
+  color: var(--text); font: inherit; font-size: 1rem; outline: none; border-radius: 0;
+}
+.field label {
+  position: absolute; left: 0; top: 14px; color: var(--text); font-size: 1rem;
+  pointer-events: none; transform-origin: left top;
+  transition: transform .25s ease, color .25s ease;
+}
+.field input:focus + label,
+.field input:not(:placeholder-shown) + label { transform: translateY(-14px) scale(.78); color: var(--cyan); }
+.field .line {
+  position: absolute; left: 0; right: 0; bottom: 20px; height: 2px; z-index: 1; background: var(--cyan);
+  transform: scaleX(0); transform-origin: left; transition: transform .35s ease;
+  box-shadow: 0 0 10px var(--cyan), 0 0 22px rgba(0,229,255,.6);
+}
+.field input:focus ~ .line { transform: scaleX(1); }
+.field svg.icon { position: absolute; right: 2px; top: 16px; width: 18px; height: 18px; fill: #fff; fill-rule: evenodd; transition: fill .25s; }
+.field input:focus ~ svg.icon { fill: var(--cyan); }
+.field.invalid input { border-bottom-color: var(--error); }
+.error { position: absolute; left: 0; bottom: 0; margin: 0; font-size: .8rem; color: var(--error); min-height: 1em; }
+
+/* Role selector (Admin / Student) */
+.roles { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; border: 0; padding: 0; margin: 0 0 4px; min-width: 0; }
+.roles legend { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.roles label { position: relative; display: block; cursor: pointer; }
+.roles input { position: absolute; opacity: 0; inset: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+.roles span {
+  display: flex; align-items: center; justify-content: center; gap: 8px; height: 42px;
+  border: 1.5px solid rgba(0,229,255,.55); border-radius: 24px; font-size: .92rem; font-weight: 600;
+  color: var(--text); background: transparent;
+  transition: background .25s, color .25s, box-shadow .25s, transform .2s;
+}
+.roles svg { width: 16px; height: 16px; fill: currentColor; }
+.roles label:hover span { box-shadow: 0 0 12px rgba(0,229,255,.5); }
+.roles input:checked + span {
+  background: linear-gradient(180deg, #19e6f2, #0b9fb3); color: #02222b; border-color: var(--cyan);
+  box-shadow: 0 0 14px rgba(0,229,255,.6);
+}
+.roles input:active + span { transform: scale(.97); }
+.roles input:focus-visible + span { outline: 2px dashed var(--turquoise); outline-offset: 3px; }
+
+/* Login extras */
+.row { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin: 4px 0 6px; font-size: .88rem; }
+.check { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); cursor: pointer; min-height: 32px; }
+.check input { width: 18px; height: 18px; accent-color: var(--cyan); }
+a, .link {
+  color: var(--cyan); text-decoration: none; background: none; border: 0; padding: 0;
+  font: inherit; cursor: pointer; transition: text-shadow .25s;
+}
+a:hover, .link:hover { text-shadow: 0 0 10px var(--cyan); text-decoration: underline; }
+:focus-visible { outline: 2px dashed var(--turquoise); outline-offset: 3px; }
+
+/* Button */
+.btn {
+  width: 100%; height: 48px; margin-top: 12px; border: 2px solid var(--cyan); border-radius: 30px; cursor: pointer;
+  font: inherit; font-size: 1rem; font-weight: 700; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,.4);
+  background: linear-gradient(180deg, #19e6f2 0%, #0b9fb3 50%, #04586a 100%);
+  box-shadow: 0 0 14px rgba(0,229,255,.45);
+  transition: transform .2s ease, filter .2s ease, box-shadow .2s ease;
+}
+.btn:hover { transform: translateY(-3px); filter: brightness(1.12); box-shadow: 0 6px 26px rgba(0,229,255,.8); }
+.btn:active { transform: translateY(1px) scale(.98); box-shadow: 0 0 10px rgba(0,229,255,.5); }
+
+.switch { text-align: center; margin: 20px 0 0; color: var(--muted); font-size: .92rem; }
+.status { min-height: 1.4em; margin: 14px 0 0; text-align: center; font-size: .9rem; color: var(--ok); }
+.status.info { color: var(--cyan); }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 860px) {
+  .card { min-height: 540px; }
+  .auth { padding: 40px 5% 32px 0; }
+  .welcome { padding-left: 36px; }
+}
+@media (max-width: 680px) {
+  body { padding: 14px; align-items: start; }
+  .card { min-height: 0; }
+  .welcome {
+    position: relative; width: 100%; padding: 32px 28px 60px;
+    clip-path: polygon(0 0, 100% 0, 100% 82%, 0 100%);
+  }
+  .slash { display: none; }
+  .welcome { padding-right: 28px; }
+  .auth { margin-left: 0; padding: 12px 28px 32px; min-height: 0; }
+  h1 { font-size: 1.9rem; margin-bottom: 18px; }
+  .field input[type="text"], .field input[type="email"], .field input[type="password"] { font-size: 16px; }
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition-duration: .01ms !important; }
+  .card { box-shadow: 0 0 18px rgba(0,229,255,.5); }
+}
+</style>
+</head>
+<body>
+<div class="bg-glow" aria-hidden="true"></div>
+<canvas id="particles" aria-hidden="true"></canvas>
+
+<main class="card">
+  <!-- Left welcome panel -->
+  <section class="welcome">
+    <h2>WELCOME BACK!</h2>
+    <p>Welcome to EcoNova. Sign in to AI powered sustainable campus guide.</p>
+  </section>
+  <svg class="slash" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><line x1="64" y1="0" x2="17" y2="100"/></svg>
+
+  <!-- Right auth panel -->
+  <section class="auth">
+
+    <!-- Sign-up form -->
+    <form id="signup" novalidate aria-labelledby="signup-title">
+      <h1 id="signup-title">Sign Up</h1>
+
+      <div class="field">
+        <input type="text" id="su-name" name="username" placeholder=" " autocomplete="username" required>
+        <label for="su-name">Username</label>
+        <span class="line"></span>
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="7.5" r="4.5"/><path d="M3.5 22c0-4.6 3.8-7.5 8.5-7.5s8.5 2.9 8.5 7.5z"/></svg>
+        <p class="error" id="su-name-err"></p>
+      </div>
+
+      <div class="field">
+        <input type="email" id="su-email" name="email" placeholder=" " autocomplete="email" required>
+        <label for="su-email">Email</label>
+        <span class="line"></span>
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h18a1 1 0 011 1v.5l-10 7L2 5.5V5a1 1 0 011-1z"/><path d="M2 8.4l10 7 10-7V19a1 1 0 01-1 1H3a1 1 0 01-1-1z"/></svg>
+        <p class="error" id="su-email-err"></p>
+      </div>
+
+      <div class="field">
+        <input type="password" id="su-pass" name="password" placeholder=" " autocomplete="new-password" required>
+        <label for="su-pass">Password</label>
+        <span class="line"></span>
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10V7.5a5 5 0 0110 0V10h1a2 2 0 012 2v8a2 2 0 01-2 2H6a2 2 0 01-2-2v-8a2 2 0 012-2zm2.2 0h5.6V7.5a2.8 2.8 0 00-5.6 0z"/></svg>
+        <p class="error" id="su-pass-err"></p>
+      </div>
+
+      <fieldset class="roles">
+        <legend>Account type</legend>
+        <label><input type="radio" name="role-su" value="Admin"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l8 3v6c0 5-3.4 9.4-8 11-4.6-1.6-8-6-8-11V5z"/></svg>Admin</span></label>
+        <label><input type="radio" name="role-su" value="Student" checked><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3L1 9l11 6 9-4.9V17h2V9zM5 13.2v4l7 3.8 7-3.8v-4l-7 3.8z"/></svg>Student</span></label>
+      </fieldset>
+
+      <button class="btn" type="submit">Sign Up</button>
+      <p class="status" role="status" aria-live="polite"></p>
+      <p class="switch">Already have an account? <button type="button" class="link" data-go="login">Login</button></p>
+    </form>
+
+    <!-- Login form -->
+    <form id="login" class="is-hidden" novalidate aria-labelledby="login-title" inert>
+      <h1 id="login-title">Login</h1>
+
+      <div class="field">
+        <input type="email" id="li-email" name="email" placeholder=" " autocomplete="email" required>
+        <label for="li-email">Email</label>
+        <span class="line"></span>
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h18a1 1 0 011 1v.5l-10 7L2 5.5V5a1 1 0 011-1z"/><path d="M2 8.4l10 7 10-7V19a1 1 0 01-1 1H3a1 1 0 01-1-1z"/></svg>
+        <p class="error" id="li-email-err"></p>
+      </div>
+
+      <div class="field">
+        <input type="password" id="li-pass" name="password" placeholder=" " autocomplete="current-password" required>
+        <label for="li-pass">Password</label>
+        <span class="line"></span>
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10V7.5a5 5 0 0110 0V10h1a2 2 0 012 2v8a2 2 0 01-2 2H6a2 2 0 01-2-2v-8a2 2 0 012-2zm2.2 0h5.6V7.5a2.8 2.8 0 00-5.6 0z"/></svg>
+        <p class="error" id="li-pass-err"></p>
+      </div>
+
+      <fieldset class="roles">
+        <legend>Account type</legend>
+        <label><input type="radio" name="role-li" value="Admin"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l8 3v6c0 5-3.4 9.4-8 11-4.6-1.6-8-6-8-11V5z"/></svg>Admin</span></label>
+        <label><input type="radio" name="role-li" value="Student" checked><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3L1 9l11 6 9-4.9V17h2V9zM5 13.2v4l7 3.8 7-3.8v-4l-7 3.8z"/></svg>Student</span></label>
+      </fieldset>
+
+      <div class="row">
+        <label class="check"><input type="checkbox" id="remember"> Remember me</label>
+        <a href="#" id="forgot">Forgot password?</a>
+      </div>
+
+      <button class="btn" type="submit">Login</button>
+      <p class="status" role="status" aria-live="polite"></p>
+      <p class="switch">Don't have an account? <button type="button" class="link" data-go="signup">Sign Up</button></p>
+    </form>
+
+  </section>
+</main>
+
+<script>
+(() => {
+  const $ = (s, r = document) => r.querySelector(s);
+  const forms = { signup: $('#signup'), login: $('#login') };
+  const emailRx = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+  /* ----- Form switching (fade + slide, no reload) ----- */
+  function show(name) {
+    const other = name === 'signup' ? 'login' : 'signup';
+    const next = forms[name], prev = forms[other];
+    prev.classList.add('is-hidden');
+    prev.classList.toggle('left', name === 'login'); // exits in the direction of travel
+    prev.inert = true;
+    next.classList.remove('is-hidden', 'left');
+    next.inert = false;
+    clearStatus(prev);
+    setTimeout(() => next.querySelector('input').focus({ preventScroll: true }), 350);
+  }
+  document.querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', () => show(b.dataset.go)));
+
+  /* ----- Validation helpers ----- */
+  const rules = {
+    'su-name':  v => v.trim().length >= 3 ? '' : 'Username must be at least 3 characters.',
+    'su-email': v => emailRx.test(v.trim()) ? '' : 'Enter a valid email, like name@example.com.',
+    'su-pass':  v => v.length >= 8 ? '' : 'Password must be at least 8 characters.',
+    'li-email': v => emailRx.test(v.trim()) ? '' : 'Enter a valid email, like name@example.com.',
+    'li-pass':  v => v ? '' : 'Enter your password.'
+  };
+  function check(input) {
+    const msg = rules[input.id](input.value);
+    $('#' + input.id + '-err').textContent = msg;
+    input.closest('.field').classList.toggle('invalid', !!msg);
+    input.setAttribute('aria-invalid', msg ? 'true' : 'false');
+    input.setAttribute('aria-describedby', input.id + '-err');
+    return !msg;
+  }
+  function clearStatus(form) { const s = $('.status', form); s.textContent = ''; s.classList.remove('info'); }
+
+  Object.values(forms).forEach(form => {
+    form.querySelectorAll('input[type="text"],input[type="email"],input[type="password"]').forEach(i => {
+      i.addEventListener('blur', () => i.value && check(i));            // validate after leaving a filled field
+      i.addEventListener('input', () => i.closest('.field').classList.contains('invalid') && check(i));
+    });
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const inputs = [...form.querySelectorAll('input[type="text"],input[type="email"],input[type="password"]')];
+      const results = inputs.map(check);
+      const status = $('.status', form);
+      status.classList.remove('info');
+      if (results.every(Boolean)) {
+        const who = form.id === 'signup' ? $('#su-name').value.trim() : $('#li-email').value.trim();
+        const role = form.querySelector('input[type="radio"]:checked').value;
+        status.textContent = form.id === 'signup'
+          ? `${role} account created for ${who}.`
+          : `Logged in as ${role}: ${who}.`;
+        if (form.id === 'login' && $('#remember').checked) status.textContent += ' Remember me is on.';
+      } else {
+        status.textContent = '';
+        inputs[results.indexOf(false)].focus();
+      }
+    });
+  });
+
+  $('#forgot').addEventListener('click', e => {
+    e.preventDefault();
+    const s = $('.status', forms.login);
+    s.classList.add('info');
+    s.textContent = 'Password reset link sent to your email.';
+  });
+
+  /* ----- Floating cyan particles ----- */
+  const canvas = $('#particles'), ctx = canvas.getContext('2d');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+  let w, h, dots = [], raf;
+  function resize() {
+    const dpr = Math.min(devicePixelRatio || 1, 2);
+    w = canvas.width = innerWidth * dpr; h = canvas.height = innerHeight * dpr;
+    dots = Array.from({ length: Math.round(Math.min(60, innerWidth / 22)) }, () => ({
+      x: Math.random() * w, y: Math.random() * h,
+      r: (Math.random() * 1.8 + .6) * dpr,
+      vy: (Math.random() * .25 + .08) * dpr, vx: (Math.random() - .5) * .15 * dpr,
+      a: Math.random() * .5 + .2
+    }));
+    draw(false);
+  }
+  function draw(animate = true) {
+    ctx.clearRect(0, 0, w, h);
+    for (const d of dots) {
+      ctx.beginPath(); ctx.arc(d.x, d.y, d.r, 0, 6.283);
+      ctx.fillStyle = `rgba(0,229,255,${d.a})`; ctx.shadowColor = '#00e5ff'; ctx.shadowBlur = 8; ctx.fill();
+      if (animate) {
+        d.y -= d.vy; d.x += d.vx;
+        if (d.y < -10) { d.y = h + 10; d.x = Math.random() * w; }
+      }
+    }
+    if (animate && !reduce.matches) raf = requestAnimationFrame(() => draw(true));
+  }
+  addEventListener('resize', () => { cancelAnimationFrame(raf); resize(); if (!reduce.matches) draw(true); });
+  document.addEventListener('visibilitychange', () => {
+    cancelAnimationFrame(raf); if (!document.hidden && !reduce.matches) draw(true);
+  });
+  resize(); if (!reduce.matches) draw(true);
+})();
+</script>
+</body>
+</html>
