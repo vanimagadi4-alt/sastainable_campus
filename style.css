@@ -2632,6 +2632,9 @@ code {
 .facility-marker:hover .building-roof { filter: brightness(1.28) drop-shadow(0 0 7px rgba(57, 230, 161, 0.55)); }
 .utility-marker-halo { fill: rgba(232, 185, 79, 0.18); stroke: #e8b94f; stroke-width: 1.5; }
 .utility-marker-dot { fill: #e8b94f; stroke: #243731; stroke-width: 2; }
+.facility-marker.active-facility .utility-marker-halo,
+.facility-marker:hover .utility-marker-halo { stroke: #a7ebcd; stroke-width: 2.5; }
+.facility-marker.active-facility .utility-marker-dot { fill: #63d6a6; }
 .utility-icon-water { fill: #263e46; }
 .utility-icon-waste { fill: none; stroke: #263e46; stroke-width: 2; stroke-linecap: round; }
 .utility-label { fill: #f3d783; font: 700 10px "JetBrains Mono", monospace; letter-spacing: 0.4px; paint-order: stroke; stroke: #1c342e; stroke-width: 3px; }
@@ -2642,6 +2645,21 @@ code {
   cursor: pointer;
   transition: opacity var(--transition);
 }
+
+.demo-facility-telemetry {
+  border: 1px solid rgba(232, 185, 79, 0.28);
+  border-radius: var(--radius-sm);
+  background: linear-gradient(135deg, rgba(232, 185, 79, 0.07), rgba(17, 39, 48, 0.54));
+  padding: 11px 12px 9px;
+}
+.demo-telemetry-heading { display: flex; justify-content: space-between; gap: 10px; align-items: center; }
+.demo-telemetry-heading strong { color: var(--text-main); font-size: 10px; }
+.demo-telemetry-heading span { color: var(--accent-yellow); font-size: 8px; font-weight: 800; letter-spacing: .65px; }
+.demo-telemetry-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px 14px; margin-top: 10px; }
+.demo-telemetry-grid div { display: flex; justify-content: space-between; align-items: baseline; gap: 6px; }
+.demo-telemetry-grid span { color: var(--text-dim); font-size: 9px; }
+.demo-telemetry-grid strong { color: var(--text-main); font: 700 10px 'JetBrains Mono', monospace; text-align: right; }
+.demo-facility-telemetry p { margin: 9px 0 0; color: var(--text-dim); font-size: 8px; line-height: 1.45; }
 
 .facility-marker.marker-hidden {
   display: none;
@@ -2880,6 +2898,11 @@ code {
 .hud-metric-pill strong span {
   color: var(--accent-cyan);
 }
+
+.hud-sparkline { display: block; width: 92px; height: 18px; margin-top: 3px; overflow: visible; }
+.hud-sparkline path { fill: none; stroke: var(--accent-green); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.hud-refresh-meta { display: flex; flex: 1 0 100%; justify-content: space-between; gap: 12px; color: var(--text-dim); font-size: 9px; padding-top: 1px; }
+.hud-refresh-meta strong { color: var(--accent-cyan); font-weight: 700; }
 
 .hud-right {
   display: flex;

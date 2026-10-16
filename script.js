@@ -1,7 +1,7 @@
 /**
  * EcoCampus AI - Enterprise Real-World Application Controller
  * Features:
- * - Real-time live sensor telemetry stream with fluctuating meters & simulation triggers
+ * - Rolling demo telemetry history, trend sparklines, and anomaly scenarios (no physical feed)
  * - Real live camera (webcam/mobile) capture directly in browser with HUD reticle
  * - Real CSV utility meter data ingestion & anomaly detection
  * - Institutional Financial & ESG Scope 1/2 Carbon Calculator ($ USD / ₹ INR)
@@ -30,22 +30,13 @@ let appState = {
   activeCurrency: "usd", // 'usd' or 'inr'
   alerts: [],
   facilitiesData: {},
+  latestTelemetry: null,
+  activeIllustrativePoint: null,
   latestDetectionData: null,
   cameraStream: null,
   liveStreamActive: true
 };
 
-document.getElementById("myButton").addEventListener("click", () => {
-  alert("EcoNova is working!");
-});
-
-
-
-
-fetch("http://127.0.0.1:5000/api/status")
-  .then(response => response.json())
-  .then(data => console.log(data))
-  .catch(error => console.error(error));
 
 // -------------------------------------------------------------
 // Safe API Fetch Helper (Robust against network and parsing errors)
@@ -167,9 +158,11 @@ function initLiveTelemetryHUD() {
   const simWaterBtn = document.getElementById("sim-water-btn");
   const simWasteBtn = document.getElementById("sim-waste-btn");
   const simResetBtn = document.getElementById("sim-reset-btn");
+  let pollInFlight = false;
 
   async function pollLiveTick() {
-    if (!appState.liveStreamActive) return;
+    if (!appState.liveStreamActive || document.hidden || pollInFlight) return;
+    pollInFlight = true;
 
     try {
       const data = await safeFetchJson("/api/telemetry/live-tick");
@@ -179,6 +172,11 @@ function initLiveTelemetryHUD() {
         if (solarEl) solarEl.textContent = Number(data.metrics.solar_generation_kw).toLocaleString();
         if (occEl) occEl.textContent = Number(data.metrics.campus_occupancy).toLocaleString();
       }
+      appState.latestTelemetry = data;
+      const updated = document.getElementById("hud-updated");
+      if (updated) updated.textContent = new Date(data.timestamp).toLocaleTimeString();
+      updateTelemetrySparklines(data.history || []);
+      if (appState.activeFacilityId) renderDemoFacilityTelemetry(appState.activeFacilityId);
       if (streamText) streamText.textContent = "DEMO SIMULATOR · NO LIVE SENSORS";
       if (streamBadge) streamBadge.classList.add("simulated");
 
@@ -201,6 +199,8 @@ function initLiveTelemetryHUD() {
       [energyEl, waterEl, solarEl, occEl].forEach(element => {
         if (element) element.textContent = "--";
       });
+    } finally {
+      pollInFlight = false;
     }
   }
 
@@ -242,6 +242,9 @@ async function triggerSimulation(type, toastMsg) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ type })
     });
+    document.querySelectorAll(".hud-sim-btn").forEach(button => button.classList.remove("active-sim"));
+    const activeButton = { energy_spike: "sim-energy-btn", water_leak: "sim-water-btn", waste_overflow: "sim-waste-btn" }[type];
+    if (activeButton) document.getElementById(activeButton)?.classList.add("active-sim");
     showToast(toastMsg, type === "reset" ? "success" : "error");
     await loadAlerts();
     return true;
@@ -260,6 +263,27 @@ function handleActiveAnomalyFeedback(detail) {
 
 function clearAnomalyHighlighting() {
   document.querySelectorAll(".facility-marker").forEach(marker => marker.classList.remove("demo-scenario-highlight"));
+}
+
+function updateTelemetrySparklines(history) {
+  const traces = [
+    ["trend-energy", "energy_kw", "#39e6a1"], ["trend-water", "water_lps", "#63c7df"],
+    ["trend-solar", "solar_generation_kw", "#f0c85d"], ["trend-occupancy", "campus_occupancy", "#a98bff"]
+  ];
+  traces.forEach(([id, key, color]) => {
+    const path = document.getElementById(id);
+    if (!path) return;
+    const values = history.slice(-24).map(point => Number(point[key])).filter(Number.isFinite);
+    if (!values.length) return;
+    const min = Math.min(...values), span = Math.max(...values) - min || 1;
+    const d = values.map((value, index) => {
+      const x = values.length === 1 ? 48 : 2 + index * 92 / (values.length - 1);
+      const y = 19 - ((value - min) / span) * 15;
+      return `${index ? "L" : "M"}${x.toFixed(1)},${y.toFixed(1)}`;
+    }).join(" ");
+    path.setAttribute("d", d);
+    path.setAttribute("stroke", color);
+  });
 }
 
 // -------------------------------------------------------------
@@ -550,17 +574,18 @@ function initNavigation() {
 // -------------------------------------------------------------
 function initCampusDigitalTwin() {
   const markers = document.querySelectorAll(".facility-marker");
+  const activateMarker = marker => {
+    const facilityId = marker.dataset.facility;
+    if (facilityId) selectFacility(facilityId);
+    else if (marker.dataset.illustrative) selectIllustrativePoint(marker.dataset.illustrative, marker);
+  };
   markers.forEach(marker => {
-    marker.addEventListener("click", () => {
-      const facilityId = marker.dataset.facility;
-      if (facilityId) selectFacility(facilityId);
-    });
+    marker.addEventListener("click", () => activateMarker(marker));
 
     marker.addEventListener("keydown", (e) => {
       if (e.key === "Enter" || e.key === " ") {
         e.preventDefault();
-        const facilityId = marker.dataset.facility;
-        if (facilityId) selectFacility(facilityId);
+        activateMarker(marker);
       }
     });
   });
@@ -585,6 +610,13 @@ function initCampusDigitalTwin() {
   if (logIssueBtn) {
     logIssueBtn.addEventListener("click", () => {
       openCreateAlertModal();
+      if (appState.activeIllustrativePoint) {
+        const category = document.getElementById("new-category");
+        const facilitySelect = document.getElementById("new-location");
+        if (category) category.value = appState.activeIllustrativePoint === "water" ? "Water" : "Waste";
+        if (facilitySelect) facilitySelect.value = "";
+        return;
+      }
       const facility = appState.facilitiesData[appState.activeFacilityId];
       if (facility) {
         const facilitySelect = document.getElementById("new-location");
@@ -596,6 +628,7 @@ function initCampusDigitalTwin() {
 
 function selectFacility(facilityId) {
   appState.activeFacilityId = facilityId;
+  appState.activeIllustrativePoint = null;
   const facility = appState.facilitiesData[facilityId];
 
   document.querySelectorAll(".facility-marker").forEach(marker => {
@@ -635,6 +668,7 @@ function selectFacility(facilityId) {
     ? `${facility.telemetry.data_source} · historical, not live`
     : "No physical meter or sensor feed connected";
   document.getElementById("detail-updated").textContent = facility.telemetry?.last_updated || "No imported reading timestamp";
+  renderDemoFacilityTelemetry(facilityId);
 
   const statusBadge = document.getElementById("detail-status-badge");
   statusBadge.textContent = status === "unknown" ? "NO LIVE FEED" : status.toUpperCase();
@@ -645,7 +679,53 @@ function selectFacility(facilityId) {
   const filterBtn = document.getElementById("detail-filter-alerts-btn");
   const logBtn = document.getElementById("detail-log-issue-btn");
   if (filterBtn) filterBtn.disabled = linkedAlerts.length === 0;
-  if (logBtn) logBtn.disabled = false;
+  if (logBtn) { logBtn.disabled = false; logBtn.textContent = "Log facility alert"; }
+}
+
+function renderDemoFacilityTelemetry(facilityId) {
+  const reading = appState.latestTelemetry?.facility_metrics?.[facilityId];
+  const set = (id, value) => {
+    const element = document.getElementById(id);
+    if (element) element.textContent = value;
+  };
+  if (!reading) {
+    ["detail-sim-energy", "detail-sim-water", "detail-sim-solar", "detail-sim-occupancy"].forEach(id => set(id, "Waiting for sample"));
+    return;
+  }
+  set("detail-sim-energy", reading.energy_kw == null ? "Not modeled" : `${Number(reading.energy_kw).toFixed(1)} kW`);
+  set("detail-sim-water", reading.water_lps == null ? "Not modeled" : `${Number(reading.water_lps).toFixed(3)} L/s`);
+  set("detail-sim-solar", reading.solar_generation_kw == null ? "Not modeled" : `${Number(reading.solar_generation_kw).toFixed(1)} kW`);
+  set("detail-sim-occupancy", reading.occupancy == null ? "Not modeled" : `${Math.round(reading.occupancy).toLocaleString()} est.`);
+}
+
+function selectIllustrativePoint(type, marker) {
+  const waterPoint = type === "water";
+  appState.activeFacilityId = null;
+  appState.activeIllustrativePoint = type;
+  document.querySelectorAll(".facility-marker").forEach(item => item.classList.toggle("active-facility", item === marker));
+  document.getElementById("detail-title").textContent = waterPoint ? "Illustrative water point" : "Illustrative waste point";
+  document.getElementById("detail-summary").textContent = waterPoint
+    ? "A schematic reference point for water monitoring. DSU meter locations have not been verified."
+    : "A schematic reference point for waste observation. No DSU collection-bin location or capacity sensor is verified.";
+  document.getElementById("detail-source").textContent = "Illustrative utility layer; no surveyed coordinates";
+  document.getElementById("detail-energy").textContent = "Not assigned";
+  document.getElementById("detail-water").textContent = "No imported meter reading";
+  document.getElementById("detail-waste").textContent = "No verified bin sensor or linked detection";
+  document.getElementById("detail-operational-status").textContent = "Unknown · no physical sensor feed";
+  document.getElementById("detail-data-source").textContent = "No connected meter, bin sensor, or verified location";
+  document.getElementById("detail-updated").textContent = "No physical reading timestamp";
+  const badge = document.getElementById("detail-status-badge");
+  badge.textContent = "ILLUSTRATIVE POINT";
+  badge.className = "status-badge yellow";
+  renderFacilityAlerts([]);
+  ["detail-sim-energy", "detail-sim-water", "detail-sim-solar", "detail-sim-occupancy"].forEach(id => {
+    const element = document.getElementById(id);
+    if (element) element.textContent = "Not assigned";
+  });
+  document.getElementById("detail-filter-alerts-btn").disabled = true;
+  const logButton = document.getElementById("detail-log-issue-btn");
+  logButton.disabled = false;
+  logButton.textContent = "Log unverified issue";
 }
 
 function renderFacilityAlerts(alerts) {

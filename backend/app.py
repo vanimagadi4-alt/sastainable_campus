@@ -187,6 +187,7 @@ TELEMETRY_STATE = {
     "base_water_lps": 2.95,
     "base_solar_kw": 418.5,
     "base_occupancy": 3420,
+    "history": [],
     "events": [{
         "time": datetime.now().strftime("%H:%M:%S"),
         "category": "system",
@@ -269,12 +270,43 @@ def live_tick():
         detail = {"type": "water", "facility_id": "library", "message": "Simulated water-flow increase above demo baseline."}
     elif mode == "waste_overflow":
         detail = {"type": "waste", "facility_id": None, "message": "Simulated overflow observation; location unverified."}
+    # These shares are illustrative allocations of campus-wide demo totals. They
+    # are not facility meter readings or surveyed sensor locations.
+    weights = {
+        "academic-research": (0.30, 0.24, 0.32),
+        "library": (0.15, 0.10, 0.12),
+        "innovation-maker": (0.22, 0.22, 0.19),
+        "sports-fitness": (0.08, 0.13, 0.12),
+        "medical-campus": (0.25, 0.31, 0.25),
+    }
+    facility_metrics = {
+        facility_id: {
+            "energy_kw": round(energy * share[0] * random.uniform(0.97, 1.03), 1),
+            "water_lps": round(water * share[1] * random.uniform(0.97, 1.03), 3),
+            "occupancy": round(occupancy * share[2] * random.uniform(0.97, 1.03)),
+            "allocation_only": True,
+        }
+        for facility_id, share in weights.items()
+    }
+    facility_metrics["solar-infrastructure"] = {
+        "solar_generation_kw": round(solar, 1), "allocation_only": True
+    }
+    timestamp = datetime.now().isoformat(timespec="seconds")
+    TELEMETRY_STATE["history"].append({
+        "timestamp": timestamp, "energy_kw": round(energy, 1),
+        "water_lps": round(water, 3), "solar_generation_kw": round(solar, 1),
+        "campus_occupancy": occupancy, "simulation_mode": mode,
+    })
+    TELEMETRY_STATE["history"] = TELEMETRY_STATE["history"][-60:]
     return jsonify({
         "success": True, "is_simulated": True, "data_source": "DEMO_SIMULATOR",
         "source_label": "Simulated values · no physical sensors connected",
-        "timestamp": datetime.now().isoformat(), "simulation_mode": mode,
+        "timestamp": timestamp, "simulation_mode": mode,
         "metrics": {"energy_kw": round(energy, 1), "water_lps": round(water, 2),
                     "solar_generation_kw": round(solar, 1), "campus_occupancy": occupancy},
+        "facility_metrics": facility_metrics,
+        "history": TELEMETRY_STATE["history"],
+        "history_limit": 60,
         "anomaly": {"is_active": detail is not None, "detail": detail},
         "recent_events": TELEMETRY_STATE["events"][-6:]
     }), 200
@@ -294,6 +326,7 @@ def simulate_anomaly():
         scenario = SIMULATION_SCENARIOS[anomaly_type]
         message, category = f"DEMO SCENARIO: {scenario['title']}", scenario["category"].lower()
     TELEMETRY_STATE["events"].append({"time": timestamp, "category": category, "text": message})
+    TELEMETRY_STATE["events"] = TELEMETRY_STATE["events"][-100:]
 
     connection = get_db()
     cursor = connection.cursor()

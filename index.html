@@ -10,11 +10,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
-  <h1>Welcome to EcoNova</h1>
-  <button id="myButton">Click Me</button>
-  <script src="script.js"></script>
-  </body>
-  </html>
   <!-- Fixed Sidebar Navigation -->
   <aside class="sidebar" id="sidebar">
     <div class="brand">
@@ -117,20 +112,24 @@
         </div>
         <div class="hud-metrics-row">
           <div class="hud-metric-pill">
-            <small>Active Campus Load</small>
+            <small>Demo Campus Load</small>
             <strong><span id="hud-energy-kw">--</span> kW</strong>
+            <svg class="hud-sparkline" viewBox="0 0 96 22" aria-hidden="true"><path id="trend-energy" /></svg>
           </div>
           <div class="hud-metric-pill">
-            <small>Main Riser Flow</small>
+            <small>Demo Water Flow</small>
             <strong><span id="hud-water-lpm">--</span> L/s</strong>
+            <svg class="hud-sparkline water" viewBox="0 0 96 22" aria-hidden="true"><path id="trend-water" /></svg>
           </div>
           <div class="hud-metric-pill">
-            <small>Solar Generation</small>
+            <small>Solar Demo Estimate</small>
             <strong><span id="hud-solar-kw">--</span> kW</strong>
+            <svg class="hud-sparkline solar" viewBox="0 0 96 22" aria-hidden="true"><path id="trend-solar" /></svg>
           </div>
           <div class="hud-metric-pill">
-            <small>Campus Occupancy</small>
+            <small>Occupancy Estimate</small>
             <strong><span id="hud-occupancy">--</span></strong>
+            <svg class="hud-sparkline occupancy" viewBox="0 0 96 22" aria-hidden="true"><path id="trend-occupancy" /></svg>
           </div>
         </div>
       </div>
@@ -141,6 +140,7 @@
         <button class="hud-sim-btn" id="sim-waste-btn" title="Simulate a bin overflow; creates an unassigned demo work order">♻ Waste</button>
         <button class="hud-sim-btn reset-btn" id="sim-reset-btn" title="Reset demo readings; existing work orders remain">↺ Reset</button>
       </div>
+      <div class="hud-refresh-meta"><span>Rolling simulator history · last 60 samples</span><span>Updated <strong id="hud-updated">waiting for first sample</strong></span></div>
     </div>
 
     <!-- Live Event Stream Ticker -->
@@ -489,6 +489,17 @@
             <div class="facility-data-row"><span>Facility status</span><strong id="detail-operational-status">Unknown · no connected status feed</strong></div>
           </div>
 
+          <section class="demo-facility-telemetry" aria-label="Modeled facility allocation from the demo simulator">
+            <div class="demo-telemetry-heading"><strong>Facility simulator view</strong><span>MODELED · NOT METERED</span></div>
+            <div class="demo-telemetry-grid">
+              <div><span>Allocated load</span><strong id="detail-sim-energy">--</strong></div>
+              <div><span>Allocated flow</span><strong id="detail-sim-water">--</strong></div>
+              <div><span>Solar demo</span><strong id="detail-sim-solar">--</strong></div>
+              <div><span>Occupancy estimate</span><strong id="detail-sim-occupancy">--</strong></div>
+            </div>
+            <p>Illustrative shares of the campus simulator total; no facility sensor locations are verified.</p>
+          </section>
+
           <div class="facility-alerts-block">
             <div class="facility-subheading"><strong>Recent linked alerts</strong><span id="detail-alert-count">0</span></div>
             <div id="detail-alerts-list" class="facility-alerts-list"><p class="facility-empty-state">No facility selected.</p></div>
@@ -709,11 +720,11 @@
           <p class="eyebrow">SIMULATED RESOURCE EXAMPLE</p>
           <h2 class="section-title">ϟ Energy Analytics & Anomaly Detection</h2>
           <p class="section-subtitle">
-            7-day electricity consumption trends across campus blocks compared against historical baselines.
+            Illustrative 7-day demo profile compared against a planning baseline; no physical campus meter feed is connected.
           </p>
         </div>
         <div class="panel-tags">
-          <span class="tag-pill yellow">DAILY CONSUMPTION: 1,284 kWh</span>
+          <span class="tag-pill yellow">DEMO DAILY PROFILE: 1,284 kWh</span>
           <span class="tag-pill dark">RULE-BASED ANOMALY DETECTOR</span>
         </div>
       </div>
@@ -724,11 +735,11 @@
           <div class="chart-header">
             <div>
               <h3>Campus Electricity Consumption (Last 7 Days)</h3>
-              <p class="chart-sub">Measured daily totals (kWh) vs baseline targets</p>
+              <p class="chart-sub">Sample demo values (kWh) vs an illustrative planning baseline</p>
             </div>
             <div class="chart-legend-pills">
-              <span class="legend-pill"><i class="legend-dot green"></i> Actual Usage</span>
-              <span class="legend-pill"><i class="legend-dot dashed"></i> Target Baseline</span>
+              <span class="legend-pill"><i class="legend-dot green"></i> Demo Load</span>
+              <span class="legend-pill"><i class="legend-dot dashed"></i> Planning Baseline</span>
             </div>
           </div>
 
@@ -767,71 +778,52 @@
                 fill="none" stroke="#39e6a1" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" />
 
               <!-- Data Point Nodes with Tooltips -->
-              <circle cx="70" cy="81" r="5" class="chart-point" data-val="Oct 09: 1,320 kWh"/>
-              <circle cx="160" cy="87" r="5" class="chart-point" data-val="Oct 10: 1,290 kWh"/>
-              <circle cx="250" cy="77" r="5" class="chart-point" data-val="Oct 11: 1,340 kWh"/>
-              <circle cx="340" cy="112" r="5" class="chart-point" data-val="Oct 12: 1,180 kWh"/>
-              <circle cx="430" cy="105" r="5" class="chart-point" data-val="Oct 13: 1,210 kWh"/>
-              <circle cx="520" cy="72" r="6" class="chart-point anomaly-point" data-val="Oct 14: 1,365 kWh (Spike!)"/>
-              <circle cx="610" cy="88" r="5" class="chart-point" data-val="Oct 15: 1,284 kWh"/>
+              <circle cx="70" cy="81" r="5" class="chart-point" data-val="Sample day -6: 1,320 kWh"/>
+              <circle cx="160" cy="87" r="5" class="chart-point" data-val="Sample day -5: 1,290 kWh"/>
+              <circle cx="250" cy="77" r="5" class="chart-point" data-val="Sample day -4: 1,340 kWh"/>
+              <circle cx="340" cy="112" r="5" class="chart-point" data-val="Sample day -3: 1,180 kWh"/>
+              <circle cx="430" cy="105" r="5" class="chart-point" data-val="Sample day -2: 1,210 kWh"/>
+              <circle cx="520" cy="72" r="6" class="chart-point anomaly-point" data-val="Sample day -1: 1,365 kWh (demo review point)"/>
+              <circle cx="610" cy="88" r="5" class="chart-point" data-val="Today (demo): 1,284 kWh"/>
 
               <!-- X-axis Labels -->
-              <text x="70" y="215" text-anchor="middle" class="chart-axis-text">Oct 09</text>
-              <text x="160" y="215" text-anchor="middle" class="chart-axis-text">Oct 10</text>
-              <text x="250" y="215" text-anchor="middle" class="chart-axis-text">Oct 11</text>
-              <text x="340" y="215" text-anchor="middle" class="chart-axis-text">Oct 12</text>
-              <text x="430" y="215" text-anchor="middle" class="chart-axis-text">Oct 13</text>
-              <text x="520" y="215" text-anchor="middle" class="chart-axis-text warning-text">Oct 14 ⚠</text>
-              <text x="610" y="215" text-anchor="middle" class="chart-axis-text">Today</text>
+              <text x="70" y="215" text-anchor="middle" class="chart-axis-text">Day -6</text>
+              <text x="160" y="215" text-anchor="middle" class="chart-axis-text">Day -5</text>
+              <text x="250" y="215" text-anchor="middle" class="chart-axis-text">Day -4</text>
+              <text x="340" y="215" text-anchor="middle" class="chart-axis-text">Day -3</text>
+              <text x="430" y="215" text-anchor="middle" class="chart-axis-text">Day -2</text>
+              <text x="520" y="215" text-anchor="middle" class="chart-axis-text warning-text">Day -1 · demo</text>
+              <text x="610" y="215" text-anchor="middle" class="chart-axis-text">Today · demo</text>
             </svg>
           </div>
 
           <div class="chart-footer-note">
-            <span>● Oct 14 Anomaly: +34% overnight surge in Block C auditorium ventilation.</span>
-            <span class="fine-print">Simulated meter data for demonstration</span>
+            <span>Demo scenario: elevated overnight load in an illustrative academic zone; no physical alarm was received.</span>
+            <span class="fine-print">Simulated sample · not a meter reading</span>
           </div>
         </div>
 
         <!-- Building Comparison & Anomaly Card -->
         <div class="analytics-side-card">
           <div class="anomaly-banner yellow-border">
-            <div class="anomaly-tag">⚡ ENERGY ANOMALY RULE TRIGGERED</div>
-            <h4>Block C: After-Hours Energy Spike</h4>
+            <div class="anomaly-tag">⚡ DEMO ENERGY REVIEW SCENARIO</div>
+            <h4>Illustrative after-hours energy review</h4>
             <p>
-              Rule <code>EN-04</code> flagged continuous 38 kWh draw between 12:00 AM – 4:00 AM 
-              (34% above scheduled unoccupied baseline of 28 kWh).
+              This example shows how an off-hours load above an expected baseline could trigger a review. No Block C, auditorium, or meter event has been verified.
             </p>
             <div class="anomaly-action-box">
               <strong>Suggested Action:</strong>
-              <p>Verify auditorium ventilation automation timer and override switch.</p>
+              <p>Compare an imported meter export with approved operating schedules before arranging a site inspection.</p>
               <button class="btn-primary-sm" onclick="filterAlertsByCategory('Energy')">
-                View Energy Alerts (1) →
+                View Energy Alerts →
               </button>
             </div>
           </div>
 
           <div class="building-breakdown-box">
-            <h4>Building Energy Consumption Share</h4>
-            <div class="bar-item">
-              <div class="bar-label"><span>Science Complex</span><span>380 kWh</span></div>
-              <div class="bar-track"><div class="bar-fill" style="width: 29%"></div></div>
-            </div>
-            <div class="bar-item">
-              <div class="bar-label"><span>Student Canteen</span><span>340 kWh</span></div>
-              <div class="bar-track"><div class="bar-fill" style="width: 26%"></div></div>
-            </div>
-            <div class="bar-item">
-              <div class="bar-label"><span>Block A (Academic)</span><span>312 kWh</span></div>
-              <div class="bar-track"><div class="bar-fill" style="width: 24%"></div></div>
-            </div>
-            <div class="bar-item">
-              <div class="bar-label"><span>Block C (Admin)</span><span class="warn">265 kWh</span></div>
-              <div class="bar-track"><div class="bar-fill yellow-fill" style="width: 21%"></div></div>
-            </div>
-            <div class="bar-item">
-              <div class="bar-label"><span>Solar Park (Clean Generation)</span><span class="green">-420 kWh</span></div>
-              <div class="bar-track"><div class="bar-fill green-fill" style="width: 32%"></div></div>
-            </div>
+            <h4>Facility meter coverage</h4>
+            <p class="muted">No verified building-level meter readings are connected. Import a historical CSV to compare facility values.</p>
+            <p class="fine-print">The map's modeled facility allocations are simulator shares, not energy consumption readings.</p>
           </div>
         </div>
       </div>
@@ -844,12 +836,12 @@
           <p class="eyebrow">SIMULATED RESOURCE EXAMPLE</p>
           <h2 class="section-title">♢ Water Monitoring & Leak Intelligence</h2>
           <p class="section-subtitle">
-            Flow-rate threshold analysis to catch concealed leaks, faulty flushometers, and unusual night draw.
+            Review imported flow readings for unusual patterns. A review flag is not physical leak detection.
           </p>
         </div>
         <div class="panel-tags">
-          <span class="tag-pill blue">DAILY USAGE: 4,250 L</span>
-          <span class="tag-pill dark">NIGHTTIME FLOW ANOMALY RULE</span>
+          <span class="tag-pill blue">DEMO DAILY PROFILE: 4,250 L</span>
+          <span class="tag-pill dark">DEMO REVIEW RULE</span>
         </div>
       </div>
 
@@ -859,10 +851,10 @@
           <div class="chart-header">
             <div>
               <h3>Campus Water Consumption (Last 7 Days)</h3>
-              <p class="chart-sub">Measured flow (Liters) vs benchmark targets</p>
+              <p class="chart-sub">Illustrative demo flow (Liters) vs a planning benchmark</p>
             </div>
             <div class="chart-legend-pills">
-              <span class="legend-pill"><i class="legend-dot blue"></i> Measured Volume</span>
+              <span class="legend-pill"><i class="legend-dot blue"></i> Demo Volume</span>
               <span class="legend-pill"><i class="legend-dot dashed"></i> Conservation Target</span>
             </div>
           </div>
@@ -902,49 +894,48 @@
                 fill="none" stroke="#3cc9ff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" />
 
               <!-- Data Point Nodes -->
-              <circle cx="70" cy="98" r="5" class="chart-point" data-val="Oct 09: 3,950 L"/>
-              <circle cx="160" cy="88" r="5" class="chart-point" data-val="Oct 10: 4,100 L"/>
-              <circle cx="250" cy="92" r="5" class="chart-point" data-val="Oct 11: 4,050 L"/>
-              <circle cx="340" cy="122" r="5" class="chart-point" data-val="Oct 12: 3,600 L"/>
-              <circle cx="430" cy="112" r="5" class="chart-point" data-val="Oct 13: 3,750 L"/>
-              <circle cx="520" cy="62" r="6" class="chart-point anomaly-point red-dot-point" data-val="Oct 14: 4,480 L (Leak Detected!)"/>
-              <circle cx="610" cy="78" r="5" class="chart-point" data-val="Oct 15: 4,250 L"/>
+              <circle cx="70" cy="98" r="5" class="chart-point" data-val="Sample day -6: 3,950 L"/>
+              <circle cx="160" cy="88" r="5" class="chart-point" data-val="Sample day -5: 4,100 L"/>
+              <circle cx="250" cy="92" r="5" class="chart-point" data-val="Sample day -4: 4,050 L"/>
+              <circle cx="340" cy="122" r="5" class="chart-point" data-val="Sample day -3: 3,600 L"/>
+              <circle cx="430" cy="112" r="5" class="chart-point" data-val="Sample day -2: 3,750 L"/>
+              <circle cx="520" cy="62" r="6" class="chart-point anomaly-point red-dot-point" data-val="Sample day -1: 4,480 L (demo review example, not leak detection)"/>
+              <circle cx="610" cy="78" r="5" class="chart-point" data-val="Today (demo): 4,250 L"/>
 
               <!-- X-axis Labels -->
-              <text x="70" y="215" text-anchor="middle" class="chart-axis-text">Oct 09</text>
-              <text x="160" y="215" text-anchor="middle" class="chart-axis-text">Oct 10</text>
-              <text x="250" y="215" text-anchor="middle" class="chart-axis-text">Oct 11</text>
-              <text x="340" y="215" text-anchor="middle" class="chart-axis-text">Oct 12</text>
-              <text x="430" y="215" text-anchor="middle" class="chart-axis-text">Oct 13</text>
-              <text x="520" y="215" text-anchor="middle" class="chart-axis-text warning-text">Oct 14 ⚠</text>
-              <text x="610" y="215" text-anchor="middle" class="chart-axis-text">Today</text>
+              <text x="70" y="215" text-anchor="middle" class="chart-axis-text">Day -6</text>
+              <text x="160" y="215" text-anchor="middle" class="chart-axis-text">Day -5</text>
+              <text x="250" y="215" text-anchor="middle" class="chart-axis-text">Day -4</text>
+              <text x="340" y="215" text-anchor="middle" class="chart-axis-text">Day -3</text>
+              <text x="430" y="215" text-anchor="middle" class="chart-axis-text">Day -2</text>
+              <text x="520" y="215" text-anchor="middle" class="chart-axis-text warning-text">Day -1 · demo</text>
+              <text x="610" y="215" text-anchor="middle" class="chart-axis-text">Today · demo</text>
             </svg>
           </div>
 
           <div class="chart-footer-note">
-            <span>● Oct 14-15 Anomaly: Sustained 165 L/hr nighttime flow in Library while building was closed.</span>
-            <span class="fine-print">Simulated sensor telemetry</span>
+            <span>Demo scenario: nighttime flow pattern for review; it does not confirm a leak or a DSU library reading.</span>
+            <span class="fine-print">Simulated sample · no connected water sensor</span>
           </div>
         </div>
 
         <!-- Water Leak & Protocol Card -->
         <div class="analytics-side-card">
           <div class="anomaly-banner blue-border">
-            <div class="anomaly-tag blue-tag">♢ WATER LEAK DETECTION RULE</div>
-            <h4>Library: Continuous Baseline Flow</h4>
+            <div class="anomaly-tag blue-tag">♢ DEMO WATER REVIEW SCENARIO</div>
+            <h4>Illustrative nighttime flow pattern</h4>
             <p>
-              Rule <code>WAT-02</code> triggered: Flow sensor registered uninterrupted draw of 165 L/hr between 2:00 AM – 5:00 AM. 
-              Indicates open fixture, running toilet, or pipe connection breach.
+              A sample scenario demonstrates how sustained off-hours flow could be reviewed. No physical sensor, meter, leak, or specific DSU fixture has been verified.
             </p>
             <div class="anomaly-action-box">
               <strong>Recommended Inspection Protocol:</strong>
               <ol class="step-list">
-                <li>Isolate 2nd-floor washroom shut-off valve.</li>
-                <li>Inspect sensor flushometers for stuck diaphragm.</li>
-                <li>Log verification in Action Center once sealed.</li>
+                <li>Compare actual meter readings with an established nighttime baseline.</li>
+                <li>Ask facilities staff to inspect the verified location and fixtures.</li>
+                <li>Log findings only after a site check confirms an issue.</li>
               </ol>
               <button class="btn-primary-sm" onclick="filterAlertsByCategory('Water')">
-                View Water Alerts (1) →
+                View Water Alerts →
               </button>
             </div>
           </div>
@@ -1036,7 +1027,7 @@
           <p class="eyebrow">DECISION SUPPORT ENGINE</p>
           <h2 class="section-title">✦ AI Contextual Recommendations</h2>
           <p class="section-subtitle">
-            Rule-based intelligence matching visual observations and sensor deltas to prioritized sustainability actions.
+            These are planning examples. They are not produced from a live sensor feed or verified facility conditions.
           </p>
         </div>
         <div class="panel-tags">
@@ -1054,22 +1045,22 @@
               <span class="rec-category">Waste Logistics</span>
             </div>
           </div>
-          <h3>1. Rebalance Canteen Bin Capacities Before Peak Lunch</h3>
+          <h3>1. Review cafeteria sorting and collection schedules</h3>
           <div class="rec-detail-row">
             <strong>Observation:</strong>
-            <p>AI computer vision identified multiple discarded plastic bottles and beverage cartons at south patio bins.</p>
+            <p>No campus image or bin sensor result is linked to this example. Use a walkthrough to identify where sorting guidance is needed.</p>
           </div>
           <div class="rec-detail-row">
             <strong>Why It Matters:</strong>
-            <p>Overflow causes ground contamination, pest attraction, and diverts recyclable plastics into landfill streams.</p>
+            <p>Clear labels and a suitable collection cadence can reduce avoidable contamination.</p>
           </div>
           <div class="rec-detail-row">
             <strong>Recommended Action:</strong>
-            <p>Dispatch custodial student worker to empty patio bins and deploy an auxiliary 240L dual-stream cart.</p>
+            <p>Observe a busy period, then confirm staffing and bin capacity with the facilities team.</p>
           </div>
           <div class="rec-detail-row evidence-row">
             <strong>Evidence Base:</strong>
-            <code>YOLOv8 Detection: 4 bottles (91% avg conf), 2 cups (86% conf)</code>
+            <code>Illustrative planning example · no campus image analyzed for this card</code>
           </div>
         </article>
 
@@ -1082,22 +1073,22 @@
               <span class="rec-category">Energy Efficiency</span>
             </div>
           </div>
-          <h3>2. Audit Auditorium HVAC Overrides in Block C</h3>
+          <h3>2. Compare facility schedules with imported energy readings</h3>
           <div class="rec-detail-row">
             <strong>Observation:</strong>
-            <p>Power telemetry registered 38 kWh continuous draw between 12:00 AM – 4:00 AM (+34% above scheduled unoccupied baseline).</p>
+            <p>The simulator can demonstrate an elevated overnight load. No auditorium, Block C, or physical meter event has been verified.</p>
           </div>
           <div class="rec-detail-row">
             <strong>Why It Matters:</strong>
-            <p>Unneeded overnight chiller operation expends ~45 kWh per night, emitting roughly 18 kg CO₂e in avoidable emissions.</p>
+            <p>Historical meter exports and operating schedules can help teams find avoidable after-hours use.</p>
           </div>
           <div class="rec-detail-row">
             <strong>Recommended Action:</strong>
-            <p>Verify building management automation schedule and inspect manual wall thermostats for staff overrides.</p>
+            <p>Compare verified readings to approved schedules, then ask facilities staff to inspect any confirmed outlier.</p>
           </div>
           <div class="rec-detail-row evidence-row">
             <strong>Evidence Base:</strong>
-            <code>Meter Substation 03: Hourly variance > 30% baseline threshold</code>
+            <code>Illustrative scenario · no campus meter import linked</code>
           </div>
         </article>
 
@@ -1110,22 +1101,22 @@
               <span class="rec-category">Water Conservation</span>
             </div>
           </div>
-          <h3>3. Inspect 2nd Floor Library Plumbing Riser</h3>
+          <h3>3. Establish a verified nighttime water baseline</h3>
           <div class="rec-detail-row">
             <strong>Observation:</strong>
-            <p>Continuous steady draw of 165 L/hr observed during full building closure (2:00 AM – 5:00 AM).</p>
+            <p>The simulator includes an off-hours flow example. No library reading, floor, or plumbing riser has been verified.</p>
           </div>
           <div class="rec-detail-row">
             <strong>Why It Matters:</strong>
-            <p>Unchecked fixture leaks waste over 490 Liters of treated water every single day and risk drywall/flooring damage.</p>
+            <p>Comparing verified meter data across occupied and closed hours can help prioritize a site review.</p>
           </div>
           <div class="rec-detail-row">
             <strong>Recommended Action:</strong>
-            <p>Isolate restroom branch valves sequentially to pinpoint failing toilet flush valve or stuck float.</p>
+            <p>Confirm a persistent pattern with meter records and have facilities staff inspect the verified location.</p>
           </div>
           <div class="rec-detail-row evidence-row">
             <strong>Evidence Base:</strong>
-            <code>Flow Sensor L-01: Zero-flow window violated during closed hours</code>
+            <code>Illustrative scenario · no live water sensor or meter is connected</code>
           </div>
         </article>
       </div>
