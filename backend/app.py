@@ -3,15 +3,19 @@
 import csv
 import io
 import math
+import os
 import random
+import re
+import secrets
 import sqlite3
 import time
 from datetime import datetime, timedelta
 from pathlib import Path
 
-from flask import Flask, jsonify, request, send_from_directory
+from flask import Flask, jsonify, redirect, request, send_from_directory, session
 from PIL import Image, UnidentifiedImageError
 from ultralytics import YOLO
+from werkzeug.security import check_password_hash, generate_password_hash
 
 BACKEND_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = BACKEND_DIR.parent
@@ -80,6 +84,10 @@ ALL_WASTE_LABELS = set().union(*(set(category) for category in WASTE_CATEGORIES.
 
 app = Flask(__name__, static_folder=str(STATIC_DIR))
 app.config["MAX_CONTENT_LENGTH"] = 8 * 1024 * 1024
+app.config["SECRET_KEY"] = os.environ.get("ECONOVA_SECRET_KEY") or secrets.token_hex(32)
+app.config["SESSION_COOKIE_HTTPONLY"] = True
+app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(days=30)
 
 
 @app.after_request
@@ -162,6 +170,17 @@ def init_db():
             is_anomaly INTEGER NOT NULL DEFAULT 0
         )
     """)
+    connection.execute("""
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT NOT NULL UNIQUE COLLATE NOCASE,
+            email TEXT NOT NULL UNIQUE COLLATE NOCASE,
+            password_hash TEXT NOT NULL,
+            role TEXT NOT NULL DEFAULT 'student' CHECK (role IN ('admin', 'student')),
+            created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            last_login_at TEXT
+        )
+    """)
     connection.commit()
     connection.close()
 
@@ -180,6 +199,15 @@ def add_sla_details(alert):
 
 
 init_db()
+
+
+@app.before_request
+def require_dashboard_login():
+    # Keep health and sign-in endpoints public. Dashboard APIs require a session.
+    if request.path.startswith("/api/") and request.path not in {
+        "/api/health", "/api/signup", "/api/login", "/api/logout", "/api/me"
+    } and not session.get("user_id"):
+        return jsonify({"error": "Please log in to continue."}), 401
 
 TELEMETRY_STATE = {
     "simulation_mode": "normal",
@@ -215,8 +243,87 @@ SIMULATION_SCENARIOS = {
 
 
 @app.route("/")
+def home():
+    return redirect("/dashboard" if session.get("user_id") else "/login")
+
+
+@app.route("/login")
+def login_page():
+    if session.get("user_id"):
+        return redirect("/dashboard")
+    return send_from_directory(PROJECT_ROOT / "EcoNova login page", "index2.html")
+
+
+@app.route("/dashboard")
 def dashboard():
+    if not session.get("user_id"):
+        return redirect("/login")
     return send_from_directory(PROJECT_ROOT, "index.html")
+
+
+@app.post("/api/signup")
+def signup():
+    payload = request.get_json(silent=True) or {}
+    username = str(payload.get("username", "")).strip()
+    email = str(payload.get("email", "")).strip().lower()
+    password = str(payload.get("password", ""))
+    if len(username) < 3:
+        return jsonify({"error": "Username must be at least 3 characters."}), 400
+    if not re.fullmatch(r"[^\s@]+@[^\s@]+\.[^\s@]{2,}", email):
+        return jsonify({"error": "Enter a valid email address."}), 400
+    if len(password) < 8:
+        return jsonify({"error": "Password must be at least 8 characters."}), 400
+    connection = get_db()
+    try:
+        cursor = connection.execute(
+            "INSERT INTO users (username, email, password_hash, role) VALUES (?, ?, ?, 'student')",
+            (username, email, generate_password_hash(password))
+        )
+        connection.commit()
+        return jsonify({"user": {"id": cursor.lastrowid, "username": username, "email": email, "role": "student"}}), 201
+    except sqlite3.IntegrityError:
+        return jsonify({"error": "That username or email is already registered."}), 409
+    finally:
+        connection.close()
+
+
+@app.post("/api/login")
+def login():
+    payload = request.get_json(silent=True) or {}
+    email = str(payload.get("email", "")).strip().lower()
+    password = str(payload.get("password", ""))
+    requested_role = str(payload.get("role", "Student")).lower()
+    connection = get_db()
+    user = connection.execute("SELECT * FROM users WHERE email = ?", (email,)).fetchone()
+    if not user or not check_password_hash(user["password_hash"], password):
+        connection.close()
+        return jsonify({"error": "Incorrect email or password."}), 401
+    if user["role"] != requested_role:
+        connection.close()
+        return jsonify({"error": f"This account is not registered as {requested_role.title()}."}), 403
+    connection.execute("UPDATE users SET last_login_at = CURRENT_TIMESTAMP WHERE id = ?", (user["id"],))
+    connection.commit()
+    connection.close()
+    session.clear()
+    session["user_id"] = user["id"]
+    session["username"] = user["username"]
+    session["email"] = user["email"]
+    session["role"] = user["role"]
+    session.permanent = bool(payload.get("remember"))
+    return jsonify({"user": {"id": user["id"], "username": user["username"], "email": user["email"], "role": user["role"]}})
+
+
+@app.post("/api/logout")
+def logout():
+    session.clear()
+    return jsonify({"ok": True})
+
+
+@app.get("/api/me")
+def current_user():
+    if not session.get("user_id"):
+        return jsonify({"error": "Please log in."}), 401
+    return jsonify({"user": {key: session.get(key) for key in ("user_id", "username", "email", "role")}})
 
 
 @app.route("/style.css")
