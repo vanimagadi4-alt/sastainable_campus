@@ -1,0 +1,5 @@
+Flask>=3.0,<4
+Pillow>=10.0
+requests>=2.31
+# Optional image inference: install torch for your platform, then ultralytics
+# ultralytics>=8.2

@@ -1,0 +1,6 @@
+__pycache__/
+.venv/
+*.py[cod]
+econova.db
+uploads/*
+!uploads/.gitkeep

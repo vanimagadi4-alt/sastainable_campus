@@ -1,0 +1,1426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EcoNova | Sustainable Campus Intelligence Platform</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <h1>Welcome to EcoNova</h1>
+  <button id="myButton">Click Me</button>
+  <script src="script.js"></script>
+  </body>
+  </html>
+  <!-- Fixed Sidebar Navigation -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-icon">⬡</div>
+      <div class="brand-text">
+        <span class="brand-title">ECONOVA <b>AI</b></span>
+        <span class="brand-subtitle">SUSTAINABILITY OS</span>
+      </div>
+    </div>
+
+    <p class="side-label">COMMAND CENTER</p>
+    <nav class="sidebar-nav">
+      <a href="#overview" class="nav-item active" data-view="overview">
+        <span class="nav-icon">⌂</span>
+        <span class="nav-label">Overview</span>
+      </a>
+      <a href="#campus-twin" class="nav-item" data-view="campus-twin">
+        <span class="nav-icon">▦</span>
+        <span class="nav-label">Campus Digital Twin</span>
+      </a>
+      <a href="#waste-intelligence" class="nav-item" data-view="waste-intelligence">
+        <span class="nav-icon">♻</span>
+        <span class="nav-label">AI Waste Intelligence</span>
+      </a>
+      <a href="#energy-analytics" class="nav-item" data-view="energy-analytics">
+        <span class="nav-icon">ϟ</span>
+        <span class="nav-label">Energy Analytics</span>
+      </a>
+      <a href="#water-monitoring" class="nav-item" data-view="water-monitoring">
+        <span class="nav-icon">♢</span>
+        <span class="nav-label">Water Monitoring</span>
+      </a>
+      <a href="#action-center" class="nav-item" data-view="action-center">
+        <span class="nav-icon">⚑</span>
+        <span class="nav-label">Priority Action Center</span>
+        <span class="badge-count" id="nav-open-count">3</span>
+      </a>
+      <a href="#recommendations" class="nav-item" data-view="recommendations">
+        <span class="nav-icon">✦</span>
+        <span class="nav-label">AI Recommendations</span>
+      </a>
+      <a href="#reports" class="nav-item" data-view="reports">
+        <span class="nav-icon">▤</span>
+        <span class="nav-label">AI Sustainability Reports</span>
+      </a>
+    </nav>
+
+    <div class="side-bottom">
+      <div class="system-status-box" id="system-status-indicator">
+        <div class="status-indicator-dot online"></div>
+        <div class="system-status-info">
+          <strong id="sidebar-status-title">AI ENGINE READY</strong>
+          <small id="sidebar-status-desc">Flask 5000 · YOLOv8n</small>
+        </div>
+      </div>
+      <p class="sidebar-quote">
+        Greener Campus.<br>
+        Data-Driven Future. 🌿
+      </p>
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <main class="main-content">
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Toggle navigation">☰</button>
+        <div>
+          <p class="eyebrow">CAMPUS SUSTAINABILITY INTELLIGENCE</p>
+          <h1 id="page-title">Executive Operations Overview</h1>
+        </div>
+      </div>
+
+      <div class="topbar-right">
+        <!-- Live API Health Indicator -->
+        <div class="api-pill" id="api-health-pill" title="Backend Server Status">
+          <span class="pulse-dot"></span>
+          <span id="api-status-text">Connecting to AI Server...</span>
+        </div>
+
+        <button class="action-btn-sm" id="top-log-btn">+ Log Campus Issue</button>
+
+        <div class="profile-card">
+          <div class="profile-avatar">FC</div>
+          <div class="profile-meta">
+            <span class="profile-name">Facility Control</span>
+            <span class="profile-role">Sustainability Admin</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Simulated Telemetry HUD (no physical sensor feed is configured) -->
+    <div class="telemetry-hud-bar" id="telemetry-hud-bar">
+      <div class="hud-left">
+        <div class="hud-stream-badge" id="hud-stream-status">
+          <span class="status-indicator-dot online"></span>
+          <span id="hud-stream-text">DEMO SIMULATOR · NO LIVE SENSORS</span>
+        </div>
+        <div class="hud-metrics-row">
+          <div class="hud-metric-pill">
+            <small>Active Campus Load</small>
+            <strong><span id="hud-energy-kw">--</span> kW</strong>
+          </div>
+          <div class="hud-metric-pill">
+            <small>Main Riser Flow</small>
+            <strong><span id="hud-water-lpm">--</span> L/s</strong>
+          </div>
+          <div class="hud-metric-pill">
+            <small>Solar Generation</small>
+            <strong><span id="hud-solar-kw">--</span> kW</strong>
+          </div>
+          <div class="hud-metric-pill">
+            <small>Campus Occupancy</small>
+            <strong><span id="hud-occupancy">--</span></strong>
+          </div>
+        </div>
+      </div>
+      <div class="hud-right">
+        <span class="hud-label-text">DEMO SCENARIOS:</span>
+        <button class="hud-sim-btn" id="sim-energy-btn" title="Simulate an HVAC power surge; creates a demo work order">⚡ Surge</button>
+        <button class="hud-sim-btn" id="sim-water-btn" title="Simulate a pipe leak; creates a demo work order">♢ Leak</button>
+        <button class="hud-sim-btn" id="sim-waste-btn" title="Simulate a bin overflow; creates an unassigned demo work order">♻ Waste</button>
+        <button class="hud-sim-btn reset-btn" id="sim-reset-btn" title="Reset demo readings; existing work orders remain">↺ Reset</button>
+      </div>
+    </div>
+
+    <!-- Live Event Stream Ticker -->
+    <div class="live-events-ticker" id="live-events-ticker">
+      <span class="ticker-tag">SIMULATION EVENT</span>
+      <span class="ticker-text" id="live-ticker-message">Waiting for the demo simulator. No physical sensor feed is connected.</span>
+    </div>
+
+    <!-- SECTION 1: Overview & Welcome -->
+    <section class="section-container" id="overview">
+      <div class="welcome-banner">
+        <div class="welcome-content">
+          <div class="welcome-tag">
+            <span>● DEMO DATA ENVIRONMENT</span>
+            <span class="divider">|</span>
+            <span>ACADEMIC TERM 2026</span>
+          </div>
+          <h2>Transforming Campus Footprint with <span>Actionable AI</span>.</h2>
+          <p>
+            EcoCampus AI unifies visual waste audits, energy telemetry, and water flow monitoring 
+            into automated decision-support workflows for campus administration and custodial teams.
+          </p>
+          <div class="welcome-actions">
+            <a href="#waste-intelligence" class="btn-primary">
+              <span>♻ Launch Waste Vision AI</span>
+            </a>
+            <a href="#campus-twin" class="btn-secondary">
+              <span>▦ Explore Campus Twin</span>
+            </a>
+            <a href="#reports" class="btn-ghost">
+              <span>▤ View Impact Report</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="eco-score-card">
+          <div class="score-circle">
+            <svg viewBox="0 0 100 100">
+              <circle class="score-bg" cx="50" cy="50" r="42"></circle>
+              <circle class="score-fill" id="score-meter-fill" cx="50" cy="50" r="42"></circle>
+            </svg>
+            <div class="score-center">
+              <span class="score-number" id="kpi-sustainability-score">86</span>
+              <span class="score-denom">/100</span>
+            </div>
+          </div>
+          <div class="score-info">
+            <span class="score-tag">DEMO INDEX</span>
+            <h4>Work-order Index</h4>
+            <p id="score-rating-text">Illustrative formula · not an audited campus rating</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6 Hackathon Required KPI Cards -->
+      <div class="stats-grid">
+        <!-- KPI 1: Sustainability Score -->
+        <article class="stat-card green-card">
+          <div class="stat-header">
+            <span>Sustainability Score</span>
+            <span class="stat-icon">🌱</span>
+          </div>
+          <div class="stat-body">
+            <div class="stat-value">
+              <span id="kpi-score-badge">86</span>
+              <small>/ 100</small>
+            </div>
+            <p class="stat-desc">Illustrative work-order index · not an audited rating</p>
+            <div class="stat-meta">
+              <span class="trend-pill info">Demo formula · not a measured trend</span>
+              <span class="demo-tag">Sample Metric</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- KPI 2: Potential Waste Issues -->
+        <article class="stat-card red-card">
+          <div class="stat-header">
+            <span>Potential Waste Issues</span>
+            <span class="stat-icon">♻</span>
+          </div>
+          <div class="stat-body">
+            <div class="stat-value">
+              <span id="kpi-waste-count">00</span>
+              <small>Alerts</small>
+            </div>
+            <p class="stat-desc">Open Waste work orders across the board</p>
+            <div class="stat-meta">
+              <span class="trend-pill negative">Open waste work orders</span>
+              <span class="demo-tag">SQLite Records</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- KPI 3: Energy Consumption -->
+        <article class="stat-card yellow-card">
+          <div class="stat-header">
+            <span>Daily Energy Usage</span>
+            <span class="stat-icon">ϟ</span>
+          </div>
+          <div class="stat-body">
+            <div class="stat-value">
+              <span id="kpi-daily-energy">1,284</span>
+              <small>kWh</small>
+            </div>
+            <p class="stat-desc">Sample 24h consumption across 8 blocks</p>
+            <div class="stat-meta">
+              <span class="trend-pill warning">↑ 2.7% vs 1,250 kWh Baseline</span>
+              <span class="demo-tag">Simulated Data</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- KPI 4: Water Consumption -->
+        <article class="stat-card blue-card">
+          <div class="stat-header">
+            <span>Daily Water Draw</span>
+            <span class="stat-icon">♢</span>
+          </div>
+          <div class="stat-body">
+            <div class="stat-value">
+              <span id="kpi-daily-water">4,250</span>
+              <small>Liters</small>
+            </div>
+            <p class="stat-desc">Continuous baseline flow monitoring</p>
+            <div class="stat-meta">
+              <span class="trend-pill negative">↑ 11.8% (Library Flagged)</span>
+              <span class="demo-tag">Simulated Data</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- KPI 5: Open Maintenance Alerts -->
+        <article class="stat-card purple-card">
+          <div class="stat-header">
+            <span>Open Corrective Actions</span>
+            <span class="stat-icon">⚑</span>
+          </div>
+          <div class="stat-body">
+            <div class="stat-value">
+              <span id="kpi-open-alerts-count">03</span>
+              <small>Open Tasks</small>
+            </div>
+            <p class="stat-desc">Pending triage in Priority Action Center</p>
+            <div class="stat-meta">
+              <span class="trend-pill info" id="kpi-in-progress-pill">1 In Progress · 2 Completed</span>
+              <span class="demo-tag">SQLite DB</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- KPI 6: Estimated Environmental Impact -->
+        <article class="stat-card teal-card">
+          <div class="stat-header">
+            <span>Avoided Carbon Impact</span>
+            <span class="stat-icon">🌍</span>
+          </div>
+          <div class="stat-body">
+            <div class="stat-value">
+              <span id="kpi-co2e-val">184</span>
+              <small>kg CO₂e</small>
+            </div>
+            <p class="stat-desc">Estimated savings from completed tasks</p>
+            <div class="stat-meta">
+              <span class="trend-pill info">User-entered estimates only</span>
+              <span class="demo-tag">Estimated Demo</span>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- SECTION 2: DSU Campus Reference Schematic -->
+    <section class="section-container" id="campus-twin">
+      <div class="panel-header-box">
+        <div>
+          <p class="eyebrow">FACILITY REFERENCE · HAROHALLI</p>
+          <h2 class="section-title">Dayananda Sagar University Campus</h2>
+          <p class="section-subtitle">Devarakaggalahalli, Harohalli, Kanakapura Road, Karnataka</p>
+        </div>
+        <div class="panel-tags">
+          <a class="tag-pill cyan" href="https://dsu.edu.in/images/E_brochure_08022024.pdf" target="_blank" rel="noreferrer">DSU E-brochure · 2024</a>
+          <span class="tag-pill dark">NO LIVE SENSOR FEEDS</span>
+        </div>
+      </div>
+
+      <div class="digital-twin-layout">
+        <section class="map-card" aria-label="DSU campus facility schematic">
+          <div class="twin-map-toolbar">
+            <div>
+              <h3>Campus facility schematic</h3>
+              <p>Brochure-described facilities and explicitly illustrative utility points</p>
+            </div>
+            <div class="twin-layer-filters" role="group" aria-label="Filter campus map layer">
+              <button class="map-filter active" type="button" data-map-filter="all" aria-pressed="true">All</button>
+              <button class="map-filter" type="button" data-map-filter="energy" aria-pressed="false">Energy</button>
+              <button class="map-filter" type="button" data-map-filter="water" aria-pressed="false">Water</button>
+              <button class="map-filter" type="button" data-map-filter="waste" aria-pressed="false">Waste</button>
+              <button class="map-filter" type="button" data-map-filter="alerts" aria-pressed="false">Alerts</button>
+            </div>
+          </div>
+
+          <p class="map-layer-note" id="map-layer-note" role="status">Illustrative campus scene, not to scale. Building, road, path, and utility positions are representative, not a verified DSU site plan.</p>
+
+          <div class="campus-viewport" id="campus-viewport">
+            <svg class="campus-schematic" id="campus-map" viewBox="0 0 1000 620" role="group" aria-label="Top-down illustrative campus scene with selectable DSU facility markers">
+              <defs>
+                <pattern id="campus-turf" width="26" height="26" patternUnits="userSpaceOnUse">
+                  <path d="M4 8l2-3m11 15 2-3M21 5l1-2" class="turf-mark" />
+                </pattern>
+                <g id="campus-tree">
+                  <ellipse cx="1" cy="3" rx="11" ry="7" class="tree-shadow" />
+                  <circle r="8" class="tree-canopy" />
+                  <circle cx="-2" cy="-2" r="3" class="tree-highlight" />
+                </g>
+              </defs>
+
+              <rect width="1000" height="620" class="campus-ground" />
+              <path d="M48 92 Q50 68 78 68 H918 Q950 70 950 98 V514 Q947 548 916 548 H79 Q48 545 48 514 Z" class="campus-parcel" />
+              <path d="M48 92 Q50 68 78 68 H918 Q950 70 950 98 V514 Q947 548 916 548 H79 Q48 545 48 514 Z" fill="url(#campus-turf)" />
+
+              <path d="M110 106 H876 Q913 106 913 143 V448 Q913 486 876 486 H131 Q93 486 93 448 V144 Q93 106 131 106 Z" class="campus-road-curb" />
+              <path d="M110 106 H876 Q913 106 913 143 V448 Q913 486 876 486 H131 Q93 486 93 448 V144 Q93 106 131 106 Z" class="campus-road" />
+              <path d="M110 106 H876 Q913 106 913 143 V448 Q913 486 876 486 H131 Q93 486 93 448 V144 Q93 106 131 106 Z" class="campus-road-center" />
+              <path d="M92 310 H914 M517 106 V486 M260 486 V530" class="campus-crossroad-curb" />
+              <path d="M92 310 H914 M517 106 V486 M260 486 V530" class="campus-crossroad" />
+              <path d="M92 310 H914 M517 106 V486 M260 486 V530" class="campus-road-center" />
+
+              <path d="M138 168 C230 170 264 200 344 208 S470 195 517 202 S690 199 780 188" class="campus-walkway" />
+              <path d="M140 398 C254 391 282 366 365 370 S470 388 517 378 S680 370 802 398" class="campus-walkway" />
+              <path d="M344 208 C360 270 365 324 365 370 M780 188 C728 250 680 314 650 374 M517 202 V378" class="campus-walkway" />
+              <path d="M206 310 V265 M704 310 V264 M365 310 V259 M650 310 V264" class="campus-walkway-branch" />
+
+              <path d="M122 131 Q169 119 225 132 L230 150 Q183 158 128 150 Z M740 445 Q790 431 863 445 L858 467 Q800 477 746 463 Z" class="campus-planting-bed" />
+              <path d="M274 270 Q300 247 330 266 Q343 287 326 301 Q292 312 274 291 Z M760 335 Q793 316 825 337 Q833 358 811 369 Q778 373 760 353 Z" class="campus-green-space" />
+              <text x="285" y="282" class="land-label">CENTRAL GARDEN</text>
+              <text x="775" y="348" class="land-label">GREEN COURT</text>
+
+              <use href="#campus-tree" x="154" y="139" /><use href="#campus-tree" x="183" y="137" /><use href="#campus-tree" x="211" y="141" />
+              <use href="#campus-tree" x="767" y="449" /><use href="#campus-tree" x="796" y="447" /><use href="#campus-tree" x="826" y="450" />
+              <use href="#campus-tree" x="291" y="280" /><use href="#campus-tree" x="316" y="277" /><use href="#campus-tree" x="787" y="345" /><use href="#campus-tree" x="811" y="346" />
+              <use href="#campus-tree" x="473" y="153" /><use href="#campus-tree" x="548" y="151" /><use href="#campus-tree" x="580" y="153" />
+              <use href="#campus-tree" x="116" y="372" /><use href="#campus-tree" x="881" y="372" /><use href="#campus-tree" x="463" y="454" /><use href="#campus-tree" x="558" y="454" />
+
+              <g class="facility-marker status-unknown" data-facility="academic-research" data-layer="energy" tabindex="0" role="button" aria-label="Academic and research facilities, illustrative position">
+                <path d="M153 169 L176 153 H307 L328 168 V245 L307 260 H176 L153 245 Z" class="building-shadow" />
+                <path d="M148 162 L171 146 H302 L323 161 V238 L302 253 H171 L148 238 Z" class="building-roof" />
+                <path d="M160 174 H190 V225 H160 Z M198 157 H225 V239 H198 Z M235 157 H263 V239 H235 Z M273 157 H297 V225 H273 Z" class="building-roof-wing" />
+                <path d="M164 182h19m-19 11h19m-19 11h19m-19 11h19m22-50v70m37-70v70m37-70v55" class="building-window-lines" />
+                <circle cx="308" cy="159" r="8" class="facility-status-dot" />
+                <text x="164" y="274" class="building-label">ACADEMIC · RESEARCH</text>
+              </g>
+
+              <g class="facility-marker status-unknown" data-facility="library" data-layer="water" tabindex="0" role="button" aria-label="Library and scholarly resources, illustrative position">
+                <path d="M399 169 L421 153 H481 L494 169 V239 L480 254 H418 L399 238 Z" class="building-shadow" />
+                <path d="M393 162 L415 146 H475 L488 162 V232 L474 247 H412 L393 231 Z" class="building-roof" />
+                <path d="M405 174 H428 V221 H405 Z M435 160 H456 V233 H435 Z M462 160 H476 V221 H462 Z" class="building-roof-wing" />
+                <path d="M410 182h12m-12 10h12m-12 10h12m26-30v58m27-58v45" class="building-window-lines" />
+                <circle cx="473" cy="159" r="8" class="facility-status-dot" />
+                <text x="407" y="268" class="building-label">LIBRARY</text>
+              </g>
+
+              <g class="facility-marker status-unknown" data-facility="innovation-maker" tabindex="0" role="button" aria-label="Innovation labs and maker spaces, illustrative position">
+                <path d="M674 174 L694 157 H818 L839 174 V232 L821 250 H693 L674 233 Z" class="building-shadow" />
+                <path d="M668 167 L688 150 H812 L833 167 V225 L815 243 H687 L668 226 Z" class="building-roof" />
+                <path d="M680 178 H713 V211 H680 Z M721 164 H753 V230 H721 Z M761 164 H793 V230 H761 Z M801 178 H822 V211 H801 Z" class="building-roof-wing" />
+                <path d="M685 186h22m-22 10h22m-22 10h22m33-33v55m40-55v55m43-44v34" class="building-window-lines" />
+                <circle cx="817" cy="164" r="8" class="facility-status-dot" />
+                <text x="684" y="266" class="building-label">INNOVATION · MAKER SPACES</text>
+              </g>
+
+              <g class="facility-marker status-unknown" data-facility="sports-fitness" tabindex="0" role="button" aria-label="Sports and fitness facilities, illustrative position">
+                <ellipse cx="220" cy="378" rx="94" ry="53" class="sports-track-outer" />
+                <ellipse cx="220" cy="378" rx="77" ry="38" class="sports-track-inner" />
+                <ellipse cx="220" cy="378" rx="59" ry="25" class="sports-field" />
+                <path d="M192 369 H248 V387 H192 Z M206 365 V391 M234 365 V391" class="sports-field-lines" />
+                <path d="M130 331 L146 318 H183 L195 331 V347 L181 359 H145 L130 346 Z" class="building-roof" />
+                <path d="M137 334h47v10h-47z" class="building-roof-wing" />
+                <circle cx="185" cy="324" r="8" class="facility-status-dot" />
+                <text x="165" y="447" class="building-label">SPORTS · FITNESS</text>
+              </g>
+
+              <g class="facility-marker status-unknown" data-facility="medical-campus" tabindex="0" role="button" aria-label="CDSIMER medical college and teaching hospital, illustrative position">
+                <path d="M388 357 L407 341 H478 L494 358 V431 L478 447 H405 L388 431 Z M507 371 L524 356 H570 L584 371 V420 L570 434 H523 L507 420 Z" class="building-shadow" />
+                <path d="M382 350 L401 334 H472 L488 351 V424 L472 440 H399 L382 424 Z M501 364 L518 349 H564 L578 364 V413 L564 427 H517 L501 413 Z" class="building-roof" />
+                <path d="M394 362 H418 V412 H394 Z M426 348 H450 V426 H426 Z M457 348 H476 V412 H457 Z M513 375 H529 V403 H513 Z M536 363 H558 V414 H536 Z" class="building-roof-wing" />
+                <path d="M399 370h14m-14 10h14m-14 10h14m32-33v62m31-62v47m43-12h10m-10 10h10m25-42v39" class="building-window-lines" />
+                <circle cx="566" cy="357" r="8" class="facility-status-dot" />
+                <text x="403" y="464" class="building-label">CDSIMER · TEACHING HOSPITAL</text>
+              </g>
+
+              <g class="facility-marker status-unknown" data-facility="solar-infrastructure" data-layer="energy" tabindex="0" role="button" aria-label="Integrated solar roof features; exact positions illustrative">
+                <path d="M723 345 L744 329 H822 L840 345 V397 L823 412 H742 L723 397 Z" class="building-shadow" />
+                <path d="M717 338 L738 322 H816 L834 338 V390 L817 405 H736 L717 390 Z" class="building-roof" />
+                <path d="M731 345 H757 V376 H731 Z M763 332 H790 V395 H763 Z M797 332 H820 V376 H797 Z" class="solar-roof-panels" />
+                <path d="M744 345v31m12-31v31m-12-15h26m-7-43v63m-13-44h27m-27 21h27m20-40v44m-23-23h23" class="solar-panel-grid" />
+                <circle cx="822" cy="331" r="8" class="facility-status-dot" />
+                <text x="729" y="430" class="building-label">SOLAR ROOF FEATURE · APPROXIMATE</text>
+              </g>
+
+              <g class="facility-marker illustrative-marker status-unknown" data-illustrative="water" data-layer="water" tabindex="0" role="button" aria-label="Illustrative water monitoring point; no DSU meter location verified">
+                <circle cx="630" cy="279" r="20" class="utility-marker-halo" />
+                <circle cx="630" cy="279" r="12" class="utility-marker-dot" />
+                <path d="M630 270 C626 276 624 278 624 282 A6 6 0 0 0 636 282 C636 278 634 276 630 270 Z" class="utility-icon-water" />
+                <text x="650" y="283" class="utility-label">WATER · ILLUSTRATIVE</text>
+              </g>
+
+              <g class="facility-marker illustrative-marker status-unknown" data-illustrative="waste" data-layer="waste" tabindex="0" role="button" aria-label="Illustrative waste observation point; no DSU bin location verified">
+                <circle cx="336" cy="451" r="20" class="utility-marker-halo" />
+                <circle cx="336" cy="451" r="12" class="utility-marker-dot" />
+                <path d="M332 445h8l-1 12h-6zM331 443h10" class="utility-icon-waste" />
+                <text x="356" y="455" class="utility-label">WASTE · ILLUSTRATIVE</text>
+              </g>
+
+              <g class="campus-gate">
+                <path d="M260 531v-20m16 20v-20m-20 4h24" class="gate-line" />
+                <text x="288" y="529" class="gate-label">ILLUSTRATIVE ENTRY</text>
+              </g>
+
+              <text x="122" y="93" class="road-label">ILLUSTRATIVE CAMPUS CIRCULATION · NOT SURVEYED</text>
+              <text x="26" y="600" class="schematic-caption">DSU HAROHALLI · SCHEMATIC REFERENCE · NOT TO SCALE</text>
+            </svg>
+          </div>
+
+          <div class="map-legend-bar">
+            <span class="legend-item"><i class="legend-dot green"></i> Normal · connected source</span>
+            <span class="legend-item"><i class="legend-dot yellow"></i> Attention / no live feed</span>
+            <span class="legend-item"><i class="legend-dot red"></i> Alert · linked record</span>
+          </div>
+        </section>
+
+        <aside class="building-detail-card" id="building-detail-card" aria-live="polite">
+          <div class="detail-header">
+            <div>
+              <p class="eyebrow">FACILITY RECORD</p>
+              <h3 id="detail-title">Select a facility</h3>
+            </div>
+            <span class="status-badge yellow" id="detail-status-badge">NO LIVE FEED</span>
+          </div>
+          <p class="detail-summary" id="detail-summary">Choose a schematic marker to inspect its reference, available data, and linked alerts.</p>
+
+          <div class="facility-data-grid">
+            <div class="facility-data-row"><span>Energy</span><strong id="detail-energy">No live reading</strong></div>
+            <div class="facility-data-row"><span>Water</span><strong id="detail-water">No live reading</strong></div>
+            <div class="facility-data-row"><span>Waste detections</span><strong id="detail-waste">No linked YOLO detections or live bin feed</strong></div>
+            <div class="facility-data-row"><span>Facility status</span><strong id="detail-operational-status">Unknown · no connected status feed</strong></div>
+          </div>
+
+          <div class="facility-alerts-block">
+            <div class="facility-subheading"><strong>Recent linked alerts</strong><span id="detail-alert-count">0</span></div>
+            <div id="detail-alerts-list" class="facility-alerts-list"><p class="facility-empty-state">No facility selected.</p></div>
+          </div>
+
+          <div class="facility-provenance">
+            <div><span>Facility reference</span><strong id="detail-source">DSU E-brochure, 2024</strong></div>
+            <div><span>Telemetry source</span><strong id="detail-data-source">No live sensor feed connected</strong></div>
+            <div><span>Last updated</span><strong id="detail-updated">No live timestamp available</strong></div>
+          </div>
+
+          <div class="detail-actions">
+            <button class="btn-primary-sm" id="detail-filter-alerts-btn" type="button" disabled>View linked alerts</button>
+            <button class="btn-ghost-sm" id="detail-log-issue-btn" type="button" disabled>Log facility alert</button>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- SECTION 3: AI Waste Intelligence (Main AI Feature) -->
+    <section class="section-container" id="waste-intelligence">
+      <div class="panel-header-box">
+        <div>
+          <p class="eyebrow">COMPUTER VISION INFERENCE</p>
+          <h2 class="section-title">♻ AI Waste Intelligence</h2>
+          <p class="section-subtitle">
+            Upload campus scene images to identify objects with pretrained YOLOv8. 
+            Review detected items, confirm waste status, and directly dispatch custodial maintenance tickets.
+          </p>
+        </div>
+        <div class="panel-tags">
+          <span class="tag-pill green">YOLOv8 PRETRAINED</span>
+          <span class="tag-pill dark">HUMAN-IN-THE-LOOP</span>
+        </div>
+      </div>
+
+      <div class="waste-intelligence-grid">
+        <!-- Upload & Input Column -->
+        <div class="waste-input-card">
+          <div class="card-top">
+            <h3>1. Input Source & Capture</h3>
+            <span class="format-note">Webcam / JPG, PNG · Max 8 MB</span>
+          </div>
+
+          <!-- Input Mode Switcher: File Upload vs Real Live Camera -->
+          <div class="input-mode-tabs">
+            <button class="mode-tab-btn active" id="tab-mode-file" type="button">📁 Upload / Samples</button>
+            <button class="mode-tab-btn" id="tab-mode-camera" type="button">📷 Live Webcam Scan</button>
+          </div>
+
+          <!-- Drag and drop upload zone -->
+          <div class="upload-dropzone" id="upload-dropzone">
+            <input type="file" id="waste-image-input" accept="image/jpeg,image/png,image/jpg" class="visually-hidden">
+            <label for="waste-image-input" class="dropzone-label">
+              <div class="dropzone-icon">📷</div>
+              <strong>Click to browse or drag image here</strong>
+              <span>Campus pathways, dining bins, outdoor lawns</span>
+            </label>
+          </div>
+
+          <!-- Live Webcam Viewfinder (Real-Time Camera Capture) -->
+          <div class="webcam-viewfinder-box" id="webcam-viewfinder-box" hidden>
+            <video id="webcam-video" autoplay playsinline muted></video>
+            <div class="camera-hud-overlay">
+              <div class="hud-corner-top">
+                <span>[AI OPTICAL HUD]</span>
+                <span>YOLOv8 REALTIME READY</span>
+              </div>
+              <div class="camera-reticle"></div>
+              <div class="camera-scan-line"></div>
+              <div class="hud-corner-bottom">
+                <span>AIM AT WASTE / RECYCLABLES</span>
+                <span>OPTICAL AUTO-CAPTURE</span>
+              </div>
+            </div>
+          </div>
+          <div class="camera-controls-row" id="camera-controls-row" hidden>
+            <button class="btn-primary" style="flex:1;" id="capture-webcam-btn" type="button">
+              📸 Capture Frame & Run AI Audit
+            </button>
+            <button class="btn-ghost-sm" id="stop-webcam-btn" type="button">
+              ⏹ Stop
+            </button>
+          </div>
+
+          <!-- Quick Test Demo Images for Hackathon Demo -->
+          <div class="sample-picker-box">
+            <span class="picker-label">✦ Hackathon 1-Click Test Images:</span>
+            <div class="sample-btn-group">
+              <button class="sample-btn" data-sample="bus" title="Sample Campus Bus & People">
+                🚌 Campus Bus Scene
+              </button>
+              <button class="sample-btn" data-sample="canteen" title="Canteen Bottles & Cups">
+                🥤 Canteen Bottles
+              </button>
+              <button class="sample-btn" data-sample="tray" title="Cafeteria Tray & Scraps">
+                🍽️ Cafeteria Tray
+              </button>
+              <button class="sample-btn" data-sample="pathway" title="Littered Campus Pathway">
+                🌿 Littered Pathway
+              </button>
+            </div>
+          </div>
+
+          <!-- Image Preview Area -->
+          <div class="preview-container" id="preview-container" hidden>
+            <div class="preview-header">
+              <span id="preview-filename">image_selected.jpg</span>
+              <button class="btn-link" id="remove-image-btn">Remove ×</button>
+            </div>
+            <img id="image-preview" alt="Selected campus preview">
+          </div>
+
+          <!-- Action Button -->
+          <button class="btn-primary btn-block" id="analyze-image-btn">
+            <span class="btn-text">Analyze Image with AI ↗</span>
+            <span class="btn-spinner" hidden></span>
+          </button>
+
+          <!-- Status / Progress notification -->
+          <div class="ai-status-message muted" id="ai-status-message" role="status">
+            Select a photo or click a 1-click test image above to begin.
+          </div>
+
+          <div class="ethics-disclaimer-box">
+            <strong>Model Limitation Disclosure:</strong>
+            <p>
+              Pretrained YOLOv8 detects general objects (e.g. bottles, cups, fruit). 
+              A detected bottle does not prove litter or overflowing bins; 
+              human verification is always required before creating maintenance alerts.
+            </p>
+          </div>
+        </div>
+
+        <!-- AI Inference Results Column -->
+        <div class="waste-results-card">
+          <div class="card-top">
+            <h3>2. AI Detection & Verification Results</h3>
+            <span class="model-badge" id="results-model-badge">YOLOv8n Active</span>
+          </div>
+
+          <!-- Empty State -->
+          <div class="results-empty-state" id="results-empty-state">
+            <div class="empty-icon">🔍</div>
+            <h4>No Image Analyzed Yet</h4>
+            <p>Upload a campus photo on the left and click "Analyze Image with AI" to view computer vision detections and bounding boxes.</p>
+          </div>
+
+          <!-- Results Content (hidden until analyzed) -->
+          <div class="results-content" id="results-content" hidden>
+            <!-- Summary stats -->
+            <div class="detection-metrics-row">
+              <div class="metric-pill">
+                <small>Total Objects</small>
+                <strong id="res-total-objects">0</strong>
+              </div>
+              <div class="metric-pill waste-highlight">
+                <small>Potential Waste</small>
+                <strong id="res-waste-objects">0</strong>
+              </div>
+              <div class="metric-pill">
+                <small>Recyclable</small>
+                <strong id="res-recyclable-count">0</strong>
+              </div>
+              <div class="metric-pill">
+                <small>Organic / Food</small>
+                <strong id="res-organic-count">0</strong>
+              </div>
+            </div>
+
+            <!-- Annotated image container -->
+            <div class="annotated-image-wrap">
+              <img id="annotated-image" alt="YOLO Annotated Detection Results">
+              <div class="image-watermark">PRETRAINED YOLOv8 BOUNDING BOXES</div>
+            </div>
+
+            <!-- List of detected chips -->
+            <div class="detected-chips-container">
+              <h4>Recognized Objects & Confidence:</h4>
+              <div class="chips-flex" id="detection-chips-list">
+                <!-- Dynamically populated chips -->
+              </div>
+            </div>
+
+            <!-- AI Contextual Decision Note -->
+            <div class="ai-recommendation-alert" id="results-recommendation-alert">
+              <span class="ai-rec-icon">✦</span>
+              <div class="ai-rec-text">
+                <strong id="results-rec-title">AI Observation Summary</strong>
+                <p id="results-rec-message">Detections processed. Review below.</p>
+              </div>
+            </div>
+
+            <!-- Human-in-the-Loop Verification Action -->
+            <div class="human-verification-card">
+              <div class="verification-header">
+                <strong>Human Verification & Action:</strong>
+                <small>Does this image represent an actionable campus issue?</small>
+              </div>
+              <div class="verification-btn-group">
+                <button class="btn-confirm-action" id="confirm-waste-issue-btn">
+                  ✓ Confirm as Waste Alert & Dispatch
+                </button>
+                <button class="btn-dismiss-action" id="dismiss-waste-btn">
+                  ✕ Dismiss (False Positive / In Use)
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: Energy Analytics -->
+    <section class="section-container" id="energy-analytics">
+      <div class="panel-header-box">
+        <div>
+          <p class="eyebrow">SIMULATED RESOURCE EXAMPLE</p>
+          <h2 class="section-title">ϟ Energy Analytics & Anomaly Detection</h2>
+          <p class="section-subtitle">
+            7-day electricity consumption trends across campus blocks compared against historical baselines.
+          </p>
+        </div>
+        <div class="panel-tags">
+          <span class="tag-pill yellow">DAILY CONSUMPTION: 1,284 kWh</span>
+          <span class="tag-pill dark">RULE-BASED ANOMALY DETECTOR</span>
+        </div>
+      </div>
+
+      <div class="analytics-grid">
+        <!-- Energy Trend Chart Card -->
+        <div class="chart-card">
+          <div class="chart-header">
+            <div>
+              <h3>Campus Electricity Consumption (Last 7 Days)</h3>
+              <p class="chart-sub">Measured daily totals (kWh) vs baseline targets</p>
+            </div>
+            <div class="chart-legend-pills">
+              <span class="legend-pill"><i class="legend-dot green"></i> Actual Usage</span>
+              <span class="legend-pill"><i class="legend-dot dashed"></i> Target Baseline</span>
+            </div>
+          </div>
+
+          <!-- Responsive SVG Interactive Chart -->
+          <div class="svg-chart-container" id="energy-chart-container">
+            <svg class="analytics-chart-svg" viewBox="0 0 700 240" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="energyGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#39e6a1" stop-opacity="0.35"/>
+                  <stop offset="100%" stop-color="#39e6a1" stop-opacity="0.0"/>
+                </linearGradient>
+              </defs>
+
+              <!-- Chart Grid Lines -->
+              <line x1="50" y1="30" x2="680" y2="30" stroke="#1b3948" stroke-dasharray="3,3"/>
+              <line x1="50" y1="80" x2="680" y2="80" stroke="#1b3948" stroke-dasharray="3,3"/>
+              <line x1="50" y1="130" x2="680" y2="130" stroke="#1b3948" stroke-dasharray="3,3"/>
+              <line x1="50" y1="180" x2="680" y2="180" stroke="#1b3948" stroke-dasharray="3,3"/>
+
+              <!-- Y-axis labels -->
+              <text x="40" y="34" class="chart-axis-text">1500</text>
+              <text x="40" y="84" class="chart-axis-text">1300</text>
+              <text x="40" y="134" class="chart-axis-text">1100</text>
+              <text x="40" y="184" class="chart-axis-text">900</text>
+
+              <!-- Baseline Area & Line -->
+              <polyline points="70,95 160,95 250,95 340,118 430,118 520,95 610,95" 
+                fill="none" stroke="#6f939f" stroke-width="2" stroke-dasharray="6,4" />
+
+              <!-- Actual Shaded Area -->
+              <polygon points="70,81 160,87 250,77 340,112 430,105 520,72 610,88 610,210 70,210" 
+                fill="url(#energyGrad)" />
+
+              <!-- Actual Trend Line -->
+              <polyline points="70,81 160,87 250,77 340,112 430,105 520,72 610,88" 
+                fill="none" stroke="#39e6a1" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" />
+
+              <!-- Data Point Nodes with Tooltips -->
+              <circle cx="70" cy="81" r="5" class="chart-point" data-val="Oct 09: 1,320 kWh"/>
+              <circle cx="160" cy="87" r="5" class="chart-point" data-val="Oct 10: 1,290 kWh"/>
+              <circle cx="250" cy="77" r="5" class="chart-point" data-val="Oct 11: 1,340 kWh"/>
+              <circle cx="340" cy="112" r="5" class="chart-point" data-val="Oct 12: 1,180 kWh"/>
+              <circle cx="430" cy="105" r="5" class="chart-point" data-val="Oct 13: 1,210 kWh"/>
+              <circle cx="520" cy="72" r="6" class="chart-point anomaly-point" data-val="Oct 14: 1,365 kWh (Spike!)"/>
+              <circle cx="610" cy="88" r="5" class="chart-point" data-val="Oct 15: 1,284 kWh"/>
+
+              <!-- X-axis Labels -->
+              <text x="70" y="215" text-anchor="middle" class="chart-axis-text">Oct 09</text>
+              <text x="160" y="215" text-anchor="middle" class="chart-axis-text">Oct 10</text>
+              <text x="250" y="215" text-anchor="middle" class="chart-axis-text">Oct 11</text>
+              <text x="340" y="215" text-anchor="middle" class="chart-axis-text">Oct 12</text>
+              <text x="430" y="215" text-anchor="middle" class="chart-axis-text">Oct 13</text>
+              <text x="520" y="215" text-anchor="middle" class="chart-axis-text warning-text">Oct 14 ⚠</text>
+              <text x="610" y="215" text-anchor="middle" class="chart-axis-text">Today</text>
+            </svg>
+          </div>
+
+          <div class="chart-footer-note">
+            <span>● Oct 14 Anomaly: +34% overnight surge in Block C auditorium ventilation.</span>
+            <span class="fine-print">Simulated meter data for demonstration</span>
+          </div>
+        </div>
+
+        <!-- Building Comparison & Anomaly Card -->
+        <div class="analytics-side-card">
+          <div class="anomaly-banner yellow-border">
+            <div class="anomaly-tag">⚡ ENERGY ANOMALY RULE TRIGGERED</div>
+            <h4>Block C: After-Hours Energy Spike</h4>
+            <p>
+              Rule <code>EN-04</code> flagged continuous 38 kWh draw between 12:00 AM – 4:00 AM 
+              (34% above scheduled unoccupied baseline of 28 kWh).
+            </p>
+            <div class="anomaly-action-box">
+              <strong>Suggested Action:</strong>
+              <p>Verify auditorium ventilation automation timer and override switch.</p>
+              <button class="btn-primary-sm" onclick="filterAlertsByCategory('Energy')">
+                View Energy Alerts (1) →
+              </button>
+            </div>
+          </div>
+
+          <div class="building-breakdown-box">
+            <h4>Building Energy Consumption Share</h4>
+            <div class="bar-item">
+              <div class="bar-label"><span>Science Complex</span><span>380 kWh</span></div>
+              <div class="bar-track"><div class="bar-fill" style="width: 29%"></div></div>
+            </div>
+            <div class="bar-item">
+              <div class="bar-label"><span>Student Canteen</span><span>340 kWh</span></div>
+              <div class="bar-track"><div class="bar-fill" style="width: 26%"></div></div>
+            </div>
+            <div class="bar-item">
+              <div class="bar-label"><span>Block A (Academic)</span><span>312 kWh</span></div>
+              <div class="bar-track"><div class="bar-fill" style="width: 24%"></div></div>
+            </div>
+            <div class="bar-item">
+              <div class="bar-label"><span>Block C (Admin)</span><span class="warn">265 kWh</span></div>
+              <div class="bar-track"><div class="bar-fill yellow-fill" style="width: 21%"></div></div>
+            </div>
+            <div class="bar-item">
+              <div class="bar-label"><span>Solar Park (Clean Generation)</span><span class="green">-420 kWh</span></div>
+              <div class="bar-track"><div class="bar-fill green-fill" style="width: 32%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 5: Water Monitoring -->
+    <section class="section-container" id="water-monitoring">
+      <div class="panel-header-box">
+        <div>
+          <p class="eyebrow">SIMULATED RESOURCE EXAMPLE</p>
+          <h2 class="section-title">♢ Water Monitoring & Leak Intelligence</h2>
+          <p class="section-subtitle">
+            Flow-rate threshold analysis to catch concealed leaks, faulty flushometers, and unusual night draw.
+          </p>
+        </div>
+        <div class="panel-tags">
+          <span class="tag-pill blue">DAILY USAGE: 4,250 L</span>
+          <span class="tag-pill dark">NIGHTTIME FLOW ANOMALY RULE</span>
+        </div>
+      </div>
+
+      <div class="analytics-grid">
+        <!-- Water Trend Chart Card -->
+        <div class="chart-card">
+          <div class="chart-header">
+            <div>
+              <h3>Campus Water Consumption (Last 7 Days)</h3>
+              <p class="chart-sub">Measured flow (Liters) vs benchmark targets</p>
+            </div>
+            <div class="chart-legend-pills">
+              <span class="legend-pill"><i class="legend-dot blue"></i> Measured Volume</span>
+              <span class="legend-pill"><i class="legend-dot dashed"></i> Conservation Target</span>
+            </div>
+          </div>
+
+          <!-- Responsive SVG Interactive Chart -->
+          <div class="svg-chart-container" id="water-chart-container">
+            <svg class="analytics-chart-svg" viewBox="0 0 700 240" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="waterGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#3cc9ff" stop-opacity="0.35"/>
+                  <stop offset="100%" stop-color="#3cc9ff" stop-opacity="0.0"/>
+                </linearGradient>
+              </defs>
+
+              <!-- Chart Grid Lines -->
+              <line x1="50" y1="30" x2="680" y2="30" stroke="#1b3948" stroke-dasharray="3,3"/>
+              <line x1="50" y1="80" x2="680" y2="80" stroke="#1b3948" stroke-dasharray="3,3"/>
+              <line x1="50" y1="130" x2="680" y2="130" stroke="#1b3948" stroke-dasharray="3,3"/>
+              <line x1="50" y1="180" x2="680" y2="180" stroke="#1b3948" stroke-dasharray="3,3"/>
+
+              <!-- Y-axis labels -->
+              <text x="40" y="34" class="chart-axis-text">5000</text>
+              <text x="40" y="84" class="chart-axis-text">4200</text>
+              <text x="40" y="134" class="chart-axis-text">3500</text>
+              <text x="40" y="184" class="chart-axis-text">2800</text>
+
+              <!-- Baseline Area & Line -->
+              <polyline points="70,110 160,110 250,110 340,135 430,135 520,110 610,110" 
+                fill="none" stroke="#6f939f" stroke-width="2" stroke-dasharray="6,4" />
+
+              <!-- Actual Shaded Area -->
+              <polygon points="70,98 160,88 250,92 340,122 430,112 520,62 610,78 610,210 70,210" 
+                fill="url(#waterGrad)" />
+
+              <!-- Actual Trend Line -->
+              <polyline points="70,98 160,88 250,92 340,122 430,112 520,62 610,78" 
+                fill="none" stroke="#3cc9ff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" />
+
+              <!-- Data Point Nodes -->
+              <circle cx="70" cy="98" r="5" class="chart-point" data-val="Oct 09: 3,950 L"/>
+              <circle cx="160" cy="88" r="5" class="chart-point" data-val="Oct 10: 4,100 L"/>
+              <circle cx="250" cy="92" r="5" class="chart-point" data-val="Oct 11: 4,050 L"/>
+              <circle cx="340" cy="122" r="5" class="chart-point" data-val="Oct 12: 3,600 L"/>
+              <circle cx="430" cy="112" r="5" class="chart-point" data-val="Oct 13: 3,750 L"/>
+              <circle cx="520" cy="62" r="6" class="chart-point anomaly-point red-dot-point" data-val="Oct 14: 4,480 L (Leak Detected!)"/>
+              <circle cx="610" cy="78" r="5" class="chart-point" data-val="Oct 15: 4,250 L"/>
+
+              <!-- X-axis Labels -->
+              <text x="70" y="215" text-anchor="middle" class="chart-axis-text">Oct 09</text>
+              <text x="160" y="215" text-anchor="middle" class="chart-axis-text">Oct 10</text>
+              <text x="250" y="215" text-anchor="middle" class="chart-axis-text">Oct 11</text>
+              <text x="340" y="215" text-anchor="middle" class="chart-axis-text">Oct 12</text>
+              <text x="430" y="215" text-anchor="middle" class="chart-axis-text">Oct 13</text>
+              <text x="520" y="215" text-anchor="middle" class="chart-axis-text warning-text">Oct 14 ⚠</text>
+              <text x="610" y="215" text-anchor="middle" class="chart-axis-text">Today</text>
+            </svg>
+          </div>
+
+          <div class="chart-footer-note">
+            <span>● Oct 14-15 Anomaly: Sustained 165 L/hr nighttime flow in Library while building was closed.</span>
+            <span class="fine-print">Simulated sensor telemetry</span>
+          </div>
+        </div>
+
+        <!-- Water Leak & Protocol Card -->
+        <div class="analytics-side-card">
+          <div class="anomaly-banner blue-border">
+            <div class="anomaly-tag blue-tag">♢ WATER LEAK DETECTION RULE</div>
+            <h4>Library: Continuous Baseline Flow</h4>
+            <p>
+              Rule <code>WAT-02</code> triggered: Flow sensor registered uninterrupted draw of 165 L/hr between 2:00 AM – 5:00 AM. 
+              Indicates open fixture, running toilet, or pipe connection breach.
+            </p>
+            <div class="anomaly-action-box">
+              <strong>Recommended Inspection Protocol:</strong>
+              <ol class="step-list">
+                <li>Isolate 2nd-floor washroom shut-off valve.</li>
+                <li>Inspect sensor flushometers for stuck diaphragm.</li>
+                <li>Log verification in Action Center once sealed.</li>
+              </ol>
+              <button class="btn-primary-sm" onclick="filterAlertsByCategory('Water')">
+                View Water Alerts (1) →
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Real-World Utility Meter CSV Ingestion Box -->
+      <div class="csv-ingest-card">
+        <div class="csv-ingest-header">
+          <div>
+            <h4>📂 Import Utility Meter CSV</h4>
+            <p class="muted" style="font-size:11px; margin:2px 0 0 0;">Uploaded readings are stored as user-provided meter data; they do not create a live sensor stream.</p>
+          </div>
+          <div class="csv-ingest-controls">
+            <a class="btn-ghost-sm" href="/sample_meter_data.csv" download="sample_campus_meter_template.csv">⬇ Download CSV Template</a>
+          </div>
+        </div>
+        <div class="csv-drop-zone" id="csv-drop-zone">
+          <input type="file" id="csv-file-input" accept=".csv" class="visually-hidden">
+          <label for="csv-file-input" style="cursor:pointer; display:block;">
+            <strong>Click to upload campus meter spreadsheet (.csv) or drag file here</strong>
+            <span style="font-size:10px; color:var(--text-dim); display:block; margin-top:2px;">Wide: timestamp, facility_id, kwh, liters · Long: timestamp, facility_id, metric, value, unit</span>
+          </label>
+        </div>
+        <div class="csv-result-panel" id="csv-result-panel" hidden>
+          <strong id="csv-status-title" style="color:var(--accent-green);">Stored historical meter import:</strong>
+          <span id="csv-status-msg" style="color:var(--text-muted); font-size:11px;"></span>
+          <span class="csv-provenance">Source: user-uploaded CSV · Historical readings, not live</span>
+          <div class="csv-stats-grid">
+            <div class="csv-stat-item"><small>Total Records</small><strong id="csv-stat-records">0</strong></div>
+            <div class="csv-stat-item"><small>Mean by Metric</small><strong id="csv-stat-mean">--</strong></div>
+            <div class="csv-stat-item"><small>Peak by Metric</small><strong id="csv-stat-max">--</strong></div>
+            <div class="csv-stat-item"><small>Anomalies Flagged</small><strong id="csv-stat-anomalies" style="color:var(--accent-red);">0</strong></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 6: Priority Action Center (Maintenance Workflow) -->
+    <section class="section-container" id="action-center">
+      <div class="panel-header-box">
+        <div>
+          <p class="eyebrow">OPERATIONAL DISPATCH</p>
+          <h2 class="section-title">⚑ Priority Action Center & Maintenance Workflow</h2>
+          <p class="section-subtitle">
+            Prioritized corrective tasks backed by SQLite persistence. 
+            Update ticket status from Open to In Progress to Completed to track environmental improvements.
+          </p>
+        </div>
+        <div class="panel-tags">
+          <button class="btn-primary-sm" id="btn-open-create-modal">+ Log New Campus Alert</button>
+        </div>
+      </div>
+
+      <!-- Action Center Filter Controls -->
+      <div class="action-filters-bar">
+        <div class="action-search-bar">
+          <span>🔍</span>
+          <input type="text" id="alert-search-input" placeholder="Search work orders, facilities, evidence...">
+        </div>
+
+        <div class="filter-group">
+          <span class="filter-label">Category:</span>
+          <button class="filter-chip active" data-filter-type="category" data-val="all" id="filter-chip-all">All (0)</button>
+          <button class="filter-chip" data-filter-type="category" data-val="Waste">♻ Waste</button>
+          <button class="filter-chip" data-filter-type="category" data-val="Energy">ϟ Energy</button>
+          <button class="filter-chip" data-filter-type="category" data-val="Water">♢ Water</button>
+        </div>
+
+        <div class="filter-group">
+          <span class="filter-label">Status:</span>
+          <button class="filter-chip active" data-filter-type="status" data-val="all">All</button>
+          <button class="filter-chip" data-filter-type="status" data-val="Open">Open</button>
+          <button class="filter-chip" data-filter-type="status" data-val="In Progress">In Progress</button>
+          <button class="filter-chip" data-filter-type="status" data-val="Completed">Completed</button>
+        </div>
+      </div>
+
+      <!-- Alerts List Container -->
+      <div class="alerts-container" id="alerts-list">
+        <!-- Rendered dynamically from SQLite backend -->
+      </div>
+    </section>
+
+    <!-- SECTION 7: AI Recommendations -->
+    <section class="section-container" id="recommendations">
+      <div class="panel-header-box">
+        <div>
+          <p class="eyebrow">DECISION SUPPORT ENGINE</p>
+          <h2 class="section-title">✦ AI Contextual Recommendations</h2>
+          <p class="section-subtitle">
+            Rule-based intelligence matching visual observations and sensor deltas to prioritized sustainability actions.
+          </p>
+        </div>
+        <div class="panel-tags">
+          <span class="tag-pill purple">ILLUSTRATIVE EXAMPLES · NOT LIVE FINDINGS</span>
+        </div>
+      </div>
+
+      <div class="recommendations-grid">
+        <!-- Recommendation Card 1: Waste -->
+        <article class="rec-card">
+          <div class="rec-header">
+            <span class="rec-icon red-bg">♻</span>
+            <div class="rec-meta">
+              <span class="rec-priority high">PRIORITY: HIGH</span>
+              <span class="rec-category">Waste Logistics</span>
+            </div>
+          </div>
+          <h3>1. Rebalance Canteen Bin Capacities Before Peak Lunch</h3>
+          <div class="rec-detail-row">
+            <strong>Observation:</strong>
+            <p>AI computer vision identified multiple discarded plastic bottles and beverage cartons at south patio bins.</p>
+          </div>
+          <div class="rec-detail-row">
+            <strong>Why It Matters:</strong>
+            <p>Overflow causes ground contamination, pest attraction, and diverts recyclable plastics into landfill streams.</p>
+          </div>
+          <div class="rec-detail-row">
+            <strong>Recommended Action:</strong>
+            <p>Dispatch custodial student worker to empty patio bins and deploy an auxiliary 240L dual-stream cart.</p>
+          </div>
+          <div class="rec-detail-row evidence-row">
+            <strong>Evidence Base:</strong>
+            <code>YOLOv8 Detection: 4 bottles (91% avg conf), 2 cups (86% conf)</code>
+          </div>
+        </article>
+
+        <!-- Recommendation Card 2: Energy -->
+        <article class="rec-card">
+          <div class="rec-header">
+            <span class="rec-icon yellow-bg">ϟ</span>
+            <div class="rec-meta">
+              <span class="rec-priority medium">PRIORITY: MEDIUM</span>
+              <span class="rec-category">Energy Efficiency</span>
+            </div>
+          </div>
+          <h3>2. Audit Auditorium HVAC Overrides in Block C</h3>
+          <div class="rec-detail-row">
+            <strong>Observation:</strong>
+            <p>Power telemetry registered 38 kWh continuous draw between 12:00 AM – 4:00 AM (+34% above scheduled unoccupied baseline).</p>
+          </div>
+          <div class="rec-detail-row">
+            <strong>Why It Matters:</strong>
+            <p>Unneeded overnight chiller operation expends ~45 kWh per night, emitting roughly 18 kg CO₂e in avoidable emissions.</p>
+          </div>
+          <div class="rec-detail-row">
+            <strong>Recommended Action:</strong>
+            <p>Verify building management automation schedule and inspect manual wall thermostats for staff overrides.</p>
+          </div>
+          <div class="rec-detail-row evidence-row">
+            <strong>Evidence Base:</strong>
+            <code>Meter Substation 03: Hourly variance > 30% baseline threshold</code>
+          </div>
+        </article>
+
+        <!-- Recommendation Card 3: Water -->
+        <article class="rec-card">
+          <div class="rec-header">
+            <span class="rec-icon blue-bg">♢</span>
+            <div class="rec-meta">
+              <span class="rec-priority high">PRIORITY: HIGH</span>
+              <span class="rec-category">Water Conservation</span>
+            </div>
+          </div>
+          <h3>3. Inspect 2nd Floor Library Plumbing Riser</h3>
+          <div class="rec-detail-row">
+            <strong>Observation:</strong>
+            <p>Continuous steady draw of 165 L/hr observed during full building closure (2:00 AM – 5:00 AM).</p>
+          </div>
+          <div class="rec-detail-row">
+            <strong>Why It Matters:</strong>
+            <p>Unchecked fixture leaks waste over 490 Liters of treated water every single day and risk drywall/flooring damage.</p>
+          </div>
+          <div class="rec-detail-row">
+            <strong>Recommended Action:</strong>
+            <p>Isolate restroom branch valves sequentially to pinpoint failing toilet flush valve or stuck float.</p>
+          </div>
+          <div class="rec-detail-row evidence-row">
+            <strong>Evidence Base:</strong>
+            <code>Flow Sensor L-01: Zero-flow window violated during closed hours</code>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- SECTION 8: AI Sustainability Reports & Impact -->
+    <section class="section-container" id="reports">
+      <div class="panel-header-box">
+        <div>
+          <p class="eyebrow">EXECUTIVE AUDIT</p>
+          <h2 class="section-title">▤ AI Sustainability Reports & Impact Tracker</h2>
+          <p class="section-subtitle">
+            Auditable executive summary measuring progress from monitoring problems to verifying corrective improvements.
+          </p>
+        </div>
+        <div class="panel-tags">
+          <button class="btn-primary-sm" id="btn-print-report">🖨️ Printable Executive Report</button>
+          <button class="btn-ghost-sm" id="btn-export-csv">📥 Export Work Orders + Meter CSV</button>
+        </div>
+      </div>
+
+      <div class="reports-summary-grid">
+        <div class="report-kpi-box">
+          <small>Total Tracked Issues</small>
+          <strong id="rep-total-issues">0</strong>
+          <span>Recorded in SQLite DB</span>
+        </div>
+        <div class="report-kpi-box">
+          <small>Resolution Rate</small>
+          <strong id="rep-res-rate">0%</strong>
+          <span id="rep-res-detail">0 Resolved · 0 Pending</span>
+        </div>
+        <div class="report-kpi-box">
+          <small>Estimated CO₂e Avoided</small>
+          <strong id="rep-co2e">0 kg</strong>
+          <span>Estimate from completed work orders</span>
+        </div>
+        <div class="report-kpi-box">
+          <small>Estimated Water Saved</small>
+          <strong id="rep-water">0 L</strong>
+          <span>Estimate from completed work orders</span>
+        </div>
+      </div>
+
+      <div class="report-card">
+        <h3>Campus Environmental Progress Breakdown</h3>
+        <p class="muted">
+          Work-order estimates below are user-entered and are not independently verified against utility bills.
+        </p>
+
+        <div class="report-table-wrapper">
+          <table class="report-table">
+            <thead>
+              <tr>
+                <th>Category</th>
+                <th>Monitored Issues</th>
+                <th>Status Breakdown</th>
+                <th>Estimated Environmental Benefit</th>
+                <th>Verification State</th>
+              </tr>
+            </thead>
+            <tbody id="report-category-rows">
+              <tr><td colspan="5">No work orders recorded.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Work-order estimate based cost avoidance and Scope 2 calculator -->
+      <div class="financial-esg-card" id="financial-esg-card">
+        <div class="financial-header-row">
+          <div>
+            <h3 style="font-size:15px; font-weight:700; color:var(--text-main); margin-bottom:2px;">Utility Cost Avoidance & Scope 2 ESG Estimate</h3>
+            <p class="muted" style="font-size:11px; margin:0;">Estimates from completed work orders only; user-entered quantities are not verified against bills. Scope 1 fuel emissions are not included.</p>
+          </div>
+          <div class="currency-toggle-group">
+            <button class="currency-btn active" id="btn-curr-usd" type="button">$ USD</button>
+            <button class="currency-btn" id="btn-curr-inr" type="button">₹ INR</button>
+          </div>
+        </div>
+
+        <div class="financial-kpi-grid">
+          <div class="financial-kpi-box">
+            <small>Total Utility Cost Avoided</small>
+            <strong id="fin-total-savings">$0.00</strong>
+            <span id="fin-breakdown-sub" style="font-size:10px; color:var(--text-muted); display:block; margin-top:3px;">No completed work-order estimates</span>
+          </div>
+          <div class="financial-kpi-box">
+            <small>Scope 2 GHG Carbon Avoided</small>
+            <strong id="fin-co2-val" style="color:var(--accent-cyan);">0 kg CO₂e</strong>
+            <span style="font-size:10px; color:var(--text-muted); display:block; margin-top:3px;">Based on 0.82 kg CO₂e / kWh grid factor</span>
+          </div>
+          <div class="financial-kpi-box">
+            <small>Landfill Waste Diverted</small>
+            <strong id="fin-waste-val" style="color:var(--accent-green);">0 kg</strong>
+            <span style="font-size:10px; color:var(--text-muted); display:block; margin-top:3px;">Entered work-order estimates</span>
+          </div>
+          <div class="financial-kpi-box">
+            <small>Environmental Tree Equivalent</small>
+            <strong id="fin-trees-val" style="color:var(--accent-yellow);">0 trees</strong>
+            <span style="font-size:10px; color:var(--text-muted); display:block; margin-top:3px;">Annual carbon absorption equivalent</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="dashboard-footer">
+      <div class="footer-left">
+        <strong>EcoCampus AI</strong> · Hackathon Software Prototype
+      </div>
+      <div class="footer-center">
+        <span>Flask API + YOLOv8n + SQLite + Vanilla JS</span>
+      </div>
+      <div class="footer-right">
+        <span>Transparent Demonstration Data · All rights reserved</span>
+      </div>
+    </footer>
+  </main>
+
+  <!-- MODAL: Confirm AI Waste Issue into Maintenance Workflow -->
+  <div class="modal-overlay" id="confirm-modal" hidden>
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>✓ Confirm Waste Alert & Dispatch Maintenance</h3>
+        <button class="modal-close-btn" id="close-confirm-modal">×</button>
+      </div>
+      <form id="confirm-waste-form" class="modal-form">
+        <div class="form-group">
+          <label for="conf-title">Issue Title</label>
+          <input type="text" id="conf-title" required value="Recyclable Waste Accumulation">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="conf-location">Verified facility association (optional)</label>
+            <select id="conf-location">
+              <option value="" selected>Not linked to a specific facility</option>
+              <option value="academic-research">Academic &amp; research facilities</option>
+              <option value="library">Library &amp; scholarly resources</option>
+              <option value="innovation-maker">Innovation labs &amp; maker spaces</option>
+              <option value="sports-fitness">Sports &amp; fitness facilities</option>
+              <option value="medical-campus">CDSIMER medical college &amp; teaching hospital</option>
+              <option value="solar-infrastructure">Solar integration (exact location unknown)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="conf-priority">Priority Level</label>
+            <select id="conf-priority" required>
+              <option value="High" selected>High (Urgent)</option>
+              <option value="Medium">Medium (Scheduled)</option>
+              <option value="Low">Low (Informational)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="conf-assignee">Assigned crew</label>
+            <select id="conf-assignee">
+              <option>Green Volunteers Guild</option>
+              <option>Facility Crew Alpha</option>
+              <option>Plumbing Unit 2</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="conf-sla-hours">SLA target (hours)</label>
+            <input id="conf-sla-hours" type="number" min="1" max="720" value="4" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="conf-evidence">AI Detection Evidence</label>
+          <textarea id="conf-evidence" rows="2" required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="conf-action">Recommended Action Plan</label>
+          <input type="text" id="conf-action" required value="Dispatch custodial worker to clear and sort recyclable containers into proper bins.">
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-ghost" id="cancel-confirm-modal">Cancel</button>
+          <button type="submit" class="btn-primary">Confirm & Create Maintenance Alert</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: Log Custom Campus Issue -->
+  <div class="modal-overlay" id="create-modal" hidden>
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>+ Log Campus Sustainability Alert</h3>
+        <button class="modal-close-btn" id="close-create-modal">×</button>
+      </div>
+      <form id="create-issue-form" class="modal-form">
+        <div class="form-group">
+          <label for="new-title">Issue Title</label>
+          <input type="text" id="new-title" placeholder="e.g., Leaking water fixture in washroom" required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="new-category">Category</label>
+            <select id="new-category" required>
+              <option value="Waste">♻ Waste</option>
+              <option value="Energy">ϟ Energy</option>
+              <option value="Water">♢ Water</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="new-location">Verified facility association (optional)</label>
+            <select id="new-location">
+              <option value="" selected>Campus-wide / location unverified</option>
+              <option value="academic-research">Academic &amp; research facilities</option>
+              <option value="library">Library &amp; scholarly resources</option>
+              <option value="innovation-maker">Innovation labs &amp; maker spaces</option>
+              <option value="sports-fitness">Sports &amp; fitness facilities</option>
+              <option value="medical-campus">CDSIMER medical college &amp; teaching hospital</option>
+              <option value="solar-infrastructure">Solar integration (exact location unknown)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="new-priority">Priority</label>
+            <select id="new-priority" required>
+              <option value="High">P1 · High</option>
+              <option value="Medium" selected>P2 · Medium</option>
+              <option value="Low">P3 · Low</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="new-assignee">Assigned crew</label>
+            <select id="new-assignee" required>
+              <option>Facility Crew Alpha</option>
+              <option>Plumbing Unit 2</option>
+              <option>Green Volunteers Guild</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="new-source">Source</label>
+            <select id="new-source" required>
+              <option value="Manual Inspection">Manual Inspection</option>
+              <option value="Student Report">Student Report</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="new-sla-hours">SLA target (hours)</label>
+            <input id="new-sla-hours" type="number" min="1" max="720" value="4" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="new-evidence">Observation / Evidence</label>
+          <textarea id="new-evidence" rows="2" placeholder="Describe the physical observation or meter reading..." required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="new-action">Corrective Action Plan</label>
+          <input type="text" id="new-action" placeholder="What should maintenance staff do next?" required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="new-energy-saved">Estimated energy saved (kWh)</label>
+            <input id="new-energy-saved" type="number" min="0" step="0.1" value="0">
+          </div>
+          <div class="form-group">
+            <label for="new-water-saved">Estimated water saved (L)</label>
+            <input id="new-water-saved" type="number" min="0" step="0.1" value="0">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="new-waste-diverted">Estimated waste diverted (kg)</label>
+          <input id="new-waste-diverted" type="number" min="0" step="0.1" value="0">
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-ghost" id="cancel-create-modal">Cancel</button>
+          <button type="submit" class="btn-primary">Save to SQLite Database</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>

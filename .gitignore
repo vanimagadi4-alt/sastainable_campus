@@ -1,0 +1,6 @@
+.venv/
+__pycache__/
+*.py[cod]
+backend/campus.db
+backend/static/latest_detection.jpg
+backend/static/detections/*.jpg
